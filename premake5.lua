@@ -95,6 +95,23 @@ project "glfw"
 
 
 
+project "VulkanSDK"
+    kind "None"
+    location "vendor/VulkanSDK"
+    
+    includedirs
+    {
+        "vendor/VulkanSDK/include"
+    }
+
+    filter "system:windows"
+        libdirs
+        {
+            "vendor/VulkanSDK/lib"
+        }
+
+
+
 project "VulkanRenderer"
     location "VulkanRenderer"
     kind "ConsoleApp"
@@ -112,18 +129,26 @@ project "VulkanRenderer"
 
     includedirs
     {
-        "%{IncludeDir.glfw}"
+        "%{IncludeDir.glfw}",
+        "%{IncludeDir.VulkanSDK}"
     }
 
     links
     {
-        "glfw"
+        "glfw",
+        "VulkanSDK",
+        "vulkan-1.lib"
     }
 
     filter "system:windows"
         cppdialect "C++17"
         staticruntime "On"
         systemversion "latest"
+
+        libdirs
+        {
+            "vendor/VulkanSDK/lib"
+        }
 
     filter "configurations:Debug"
         symbols "On"
