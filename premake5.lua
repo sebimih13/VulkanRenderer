@@ -95,23 +95,6 @@ project "glfw"
 
 
 
-project "VulkanSDK"
-    kind "None"
-    location "vendor/VulkanSDK"
-    
-    includedirs
-    {
-        "vendor/VulkanSDK/include"
-    }
-
-    filter "system:windows"
-        libdirs
-        {
-            "vendor/VulkanSDK/lib"
-        }
-
-
-
 project "VulkanRenderer"
     location "VulkanRenderer"
     kind "ConsoleApp"
@@ -136,7 +119,6 @@ project "VulkanRenderer"
     links
     {
         "glfw",
-        "VulkanSDK",
         "vulkan-1.lib"
     }
 
