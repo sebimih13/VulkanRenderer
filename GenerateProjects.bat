@@ -21,6 +21,10 @@ if not defined VulkanSDKPath (
     echo Please install the Vulkan SDK. Press any key to continue...
     pause > nul
 
+    rem Wait for the user to finish the installation
+    echo Please run again GenerateProjects.bat file. Press any key to continue...
+    pause > nul
+
     rem Retrieve the VK_SDK_PATH environment variable after installation
     set "VulkanSDKPath=%VK_SDK_PATH%"
 )
