@@ -75,8 +75,8 @@ project "glfw"
 
         files
         {
-			"module/src/**.c",
-			"module/src/**.h"
+			"vendor/glfw/src/**.c",
+			"vendor/glfw/src/**.h"
         }
 
         defines 
