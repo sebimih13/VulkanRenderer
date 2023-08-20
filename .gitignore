@@ -455,3 +455,6 @@ _deps
 bin/
 bin-int/
 [Bb][Uu][Ii][Ll][Dd]/
+
+# Vulkan SDK
+vendor/VulkanSDK
