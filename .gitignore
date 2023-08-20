@@ -436,6 +436,8 @@ FodyWeavers.xsd
 *.out
 *.app
 
+!premake5.exe
+
 # CMake
 CMakeLists.txt.user
 CMakeCache.txt
@@ -450,5 +452,6 @@ CTestTestfile.cmake
 _deps
 
 # Build folder
-out/build
+bin/
+bin-int/
 [Bb][Uu][Ii][Ll][Dd]/
