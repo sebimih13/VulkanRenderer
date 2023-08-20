@@ -436,6 +436,7 @@ FodyWeavers.xsd
 *.out
 *.app
 
+# Exclude premake5.exe
 !premake5.exe
 
 # CMake
