@@ -15,6 +15,7 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 IncludeDir = {}
 IncludeDir["glfw"] = "vendor/glfw/include"
 IncludeDir["VulkanSDK"] = "vendor/VulkanSDK/include"
+IncludeDir["glm"] = "vendor/glm"
 
 
 
@@ -113,7 +114,8 @@ project "VulkanRenderer"
     includedirs
     {
         "%{IncludeDir.glfw}",
-        "%{IncludeDir.VulkanSDK}"
+        "%{IncludeDir.VulkanSDK}",
+        "%{IncludeDir.glm}"
     }
 
     links
