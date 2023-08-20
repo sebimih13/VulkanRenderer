@@ -34,7 +34,10 @@ project "glfw"
         "vendor/glfw/src/input.c",
         "vendor/glfw/src/monitor.c",
         "vendor/glfw/src/vulkan.c",
-        "vendor/glfw/src/window.c"
+        "vendor/glfw/src/window.c",
+
+        "vendor/glfw/src/**.c",
+        "vendor/glfw/src/**.h"
     }
 
     filter "system:linux"
