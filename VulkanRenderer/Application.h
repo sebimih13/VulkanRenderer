@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Window.h"
+#include "VulkanPipeline.h"
 
 namespace VulkanRenderer
 {
@@ -19,6 +20,7 @@ namespace VulkanRenderer
 
 	private:
 		VulkanWindow Window;
+		VulkanPipeline Pipeline;
 	};
 
 } // namespace VulkanRenderer

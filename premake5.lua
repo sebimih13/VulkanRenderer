@@ -108,7 +108,9 @@ project "VulkanRenderer"
     {
         "%{prj.name}/**.h",
         "%{prj.name}/**.cpp",
-        "%{prj.name}/**.hpp"
+        "%{prj.name}/**.hpp",
+        "%{prj.name}/**.vert",
+        "%{prj.name}/**.frag"
     }
 
     includedirs

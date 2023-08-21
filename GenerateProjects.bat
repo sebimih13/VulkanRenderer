@@ -50,6 +50,15 @@ if defined VulkanSDKPath (
     ) else (
         echo "Lib" folder not found in VK_SDK_PATH.
     )
+
+    rem Copy glslc.exe to the Shaders folder
+    if exist "%VulkanSDKPath%\Bin" (
+        echo Copying "glslc.exe" ...
+        xcopy "%VulkanSDKPath%\Bin\glslc.exe" "%~dp0VulkanRenderer\Shaders\" /E /I /Y
+        echo "glslc.exe" copied successfully.
+    ) else (
+        echo "glslc.exe" not found in VK_SDK_PATH.
+    )
 ) else (
     echo VK_SDK_PATH is not defined.
     echo Please download Vulkan SDK
@@ -58,4 +67,5 @@ if defined VulkanSDKPath (
 endlocal
 
 call vendor\premake5\premake5.exe vs2022
+
 PAUSE

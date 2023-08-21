@@ -459,3 +459,6 @@ bin-int/
 
 # Vulkan SDK
 vendor/VulkanSDK
+
+# Exclude compiled shaders
+*.spv
