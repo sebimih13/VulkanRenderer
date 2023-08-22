@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Window.h"
+#include "VulkanWindow.h"
 #include "VulkanPipeline.h"
 
 namespace VulkanRenderer

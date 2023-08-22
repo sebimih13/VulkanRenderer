@@ -1,4 +1,6 @@
-#include "Window.h"
+#include "VulkanWindow.h"
+
+#include <stdexcept>
 
 namespace VulkanRenderer
 {
@@ -15,6 +17,14 @@ namespace VulkanRenderer
 	{
 		glfwDestroyWindow(Window);
 		glfwTerminate();
+	}
+
+	void VulkanWindow::createWindowSurface(VkInstance Instance, VkSurfaceKHR* Surface)
+	{
+		if (glfwCreateWindowSurface(Instance, Window, nullptr, Surface) != VK_SUCCESS)
+		{
+			throw std::runtime_error("Failed to create window surface");
+		}
 	}
 
 	void VulkanWindow::InitializeWindow()

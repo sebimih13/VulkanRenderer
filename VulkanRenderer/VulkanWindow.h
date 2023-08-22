@@ -19,6 +19,8 @@ namespace VulkanRenderer
 
 		inline bool ShouldClose() { return glfwWindowShouldClose(Window); }
 
+		void createWindowSurface(VkInstance Instance, VkSurfaceKHR* Surface);
+
 	private:
 		void InitializeWindow();
 
