@@ -4,6 +4,8 @@
 #include <fstream>
 #include <stdexcept>
 
+#include <filesystem>	// TODO : delete
+
 namespace VulkanRenderer
 {
 
@@ -22,6 +24,8 @@ namespace VulkanRenderer
 		std::fstream File(FilePath, std::ios::ate | std::ios::binary);
 		if (!File.is_open())
 		{
+			std::cout << std::filesystem::current_path() << '\n';
+			std::cout << FilePath << '\n';
 			throw std::runtime_error("Failed to open file: " + FilePath);
 		}
 

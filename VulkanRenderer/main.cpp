@@ -6,10 +6,9 @@
 
 int main()
 {
-	VulkanRenderer::Application App;
-
 	try
 	{
+		VulkanRenderer::Application App;
 		App.Run();
 	}
 	catch (const std::exception& e)
