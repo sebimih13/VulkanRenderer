@@ -21,7 +21,7 @@ namespace VulkanRenderer
 
 	std::vector<char> VulkanPipeline::ReadFile(const std::string& FilePath)
 	{
-		std::fstream File(FilePath, std::ios::ate | std::ios::binary);
+		std::ifstream File(FilePath, std::ios::ate | std::ios::binary);
 		if (!File.is_open())
 		{
 			std::cout << std::filesystem::current_path() << '\n';
