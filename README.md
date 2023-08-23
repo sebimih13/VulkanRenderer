@@ -1,4 +1,18 @@
 # VulkanRenderer
 Vulkan Renderer
 
-git clone --recursive https://github.com/sebimih13/VulkanRenderer
+### Installation
+1. Clone the repo
+```sh
+git clone --recursive https://github.com/sebimih13/VulkanRenderer.git
+```
+
+2. Generate Projects
+```sh
+./GenerateProjects.bat
+```
+
+3. Compile shaders
+```sh
+./VulkanRenderer/Shaders/CompileShaders.bat
+```
