@@ -2,6 +2,7 @@
 
 #include "VulkanWindow.h"
 #include "VulkanPipeline.h"
+#include "VulkanDevice.h"
 
 namespace VulkanRenderer
 {
@@ -20,6 +21,7 @@ namespace VulkanRenderer
 
 	private:
 		VulkanWindow Window;
+		VulkanDevice Device;
 		VulkanPipeline Pipeline;
 	};
 

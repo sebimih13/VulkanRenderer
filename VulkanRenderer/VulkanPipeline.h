@@ -1,21 +1,40 @@
 #pragma once
 
+#include "VulkanDevice.h"
+
 #include <string>
 #include <vector>
 
 namespace VulkanRenderer
 {
 
+	struct PipelineConfigInfo
+	{
+
+	};
+
 	class VulkanPipeline
 	{
 	public:
-		VulkanPipeline(const std::string& VertFilePath, const std::string& FragFilePath);
-		virtual ~VulkanPipeline();
+		VulkanPipeline(VulkanDevice& Device, const PipelineConfigInfo& ConfigInfo, const std::string& VertFilePath, const std::string& FragFilePath);
+		~VulkanPipeline();
+
+		VulkanPipeline(const VulkanPipeline&) = delete;
+		void operator=(const VulkanPipeline&) = delete;
+
+		static PipelineConfigInfo DefaultPipelineConfigInfo(uint32_t Width, uint32_t Height);
 
 	private:
 		static std::vector<char> ReadFile(const std::string& FilePath);
 
-		void CreateGraphicsPipeline(const std::string& VertFilePath, const std::string& FragFilePath);
+		void CreateGraphicsPipeline(const PipelineConfigInfo& ConfigInfo, const std::string& VertFilePath, const std::string& FragFilePath);
+
+		VulkanDevice& Device;
+		VkPipeline GraphicsPipeline;
+		VkShaderModule VertShaderModule;
+		VkShaderModule FragShaderModule;
+
+		void CreateShaderModule(const std::vector<char>& code, VkShaderModule* ShaderModule);
 	};
 
 } // namespace VulkanRenderer

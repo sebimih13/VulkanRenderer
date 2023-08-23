@@ -5,7 +5,8 @@ namespace VulkanRenderer
 
 	Application::Application()
 		: Window(WIDTH, HEIGHT, "Vulkan Renderer")
-		, Pipeline("Shaders/simple_shader.vert.spv", "Shaders/simple_shader.frag.spv")
+		, Device(Window)
+		, Pipeline(Device, VulkanPipeline::DefaultPipelineConfigInfo(WIDTH, HEIGHT), "Shaders/simple_shader.vert.spv", "Shaders/simple_shader.frag.spv")
 	{
 		 
 	}
