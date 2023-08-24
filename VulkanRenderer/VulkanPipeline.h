@@ -10,7 +10,18 @@ namespace VulkanRenderer
 
 	struct PipelineConfigInfo
 	{
-
+		VkViewport Viewport;
+		VkRect2D Scissor;
+		VkPipelineViewportStateCreateInfo ViewportInfo;
+		VkPipelineInputAssemblyStateCreateInfo InputAssemblyInfo;
+		VkPipelineRasterizationStateCreateInfo RasterizationInfo;
+		VkPipelineMultisampleStateCreateInfo MultisampleInfo;
+		VkPipelineColorBlendAttachmentState ColorBlendAttachment;
+		VkPipelineColorBlendStateCreateInfo ColorBlendInfo;
+		VkPipelineDepthStencilStateCreateInfo DepthStencilInfo;
+		VkPipelineLayout PipelineLayout = nullptr;
+		VkRenderPass RenderPass = nullptr;
+		uint32_t Subpass = 0;
 	};
 
 	class VulkanPipeline
@@ -31,6 +42,7 @@ namespace VulkanRenderer
 
 		VulkanDevice& Device;
 		VkPipeline GraphicsPipeline;
+
 		VkShaderModule VertShaderModule;
 		VkShaderModule FragShaderModule;
 
