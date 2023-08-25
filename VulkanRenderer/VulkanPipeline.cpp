@@ -21,6 +21,11 @@ namespace VulkanRenderer
 		vkDestroyPipeline(Device.device(), GraphicsPipeline, nullptr);
 	}
 
+	void VulkanPipeline::Bind(VkCommandBuffer CommandBuffer)
+	{
+		vkCmdBindPipeline(CommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, GraphicsPipeline);
+	} 
+
 	PipelineConfigInfo VulkanPipeline::DefaultPipelineConfigInfo(uint32_t Width, uint32_t Height)
 	{
 		PipelineConfigInfo ConfigInfo = {};

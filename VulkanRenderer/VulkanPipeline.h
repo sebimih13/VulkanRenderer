@@ -32,6 +32,8 @@ namespace VulkanRenderer
 		VulkanPipeline(const VulkanPipeline&) = delete;
 		void operator=(const VulkanPipeline&) = delete;
 
+		void Bind(VkCommandBuffer CommandBuffer);
+
 		static PipelineConfigInfo DefaultPipelineConfigInfo(uint32_t Width, uint32_t Height);
 
 	private:
