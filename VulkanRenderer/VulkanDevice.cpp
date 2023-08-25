@@ -86,7 +86,7 @@ namespace VulkanRenderer
 		createInfo.enabledExtensionCount = static_cast<uint32_t>(extensions.size());
 		createInfo.ppEnabledExtensionNames = extensions.data();
 
-		VkDebugUtilsMessengerCreateInfoEXT debugCreateInfo;
+		VkDebugUtilsMessengerCreateInfoEXT debugCreateInfo = {};
 		if (enableValidationLayers) 
 		{
 			createInfo.enabledLayerCount = static_cast<uint32_t>(validationLayers.size());
@@ -224,7 +224,7 @@ namespace VulkanRenderer
 			swapChainAdequate = !swapChainSupport.formats.empty() && !swapChainSupport.presentModes.empty();
 		}
 
-		VkPhysicalDeviceFeatures supportedFeatures;
+		VkPhysicalDeviceFeatures supportedFeatures = {};
 		vkGetPhysicalDeviceFeatures(device, &supportedFeatures);
 
 		return indices.isComplete() && extensionsSupported && swapChainAdequate &&
@@ -248,7 +248,7 @@ namespace VulkanRenderer
 			return;
 		}
 
-		VkDebugUtilsMessengerCreateInfoEXT createInfo;
+		VkDebugUtilsMessengerCreateInfoEXT createInfo = {};
 		populateDebugMessengerCreateInfo(createInfo);
 		if (CreateDebugUtilsMessengerEXT(instance, &createInfo, nullptr, &debugMessenger) != VK_SUCCESS) 
 		{
@@ -349,7 +349,7 @@ namespace VulkanRenderer
 
 	QueueFamilyIndices VulkanDevice::findQueueFamilies(VkPhysicalDevice device) 
 	{
-		QueueFamilyIndices indices;
+		QueueFamilyIndices indices = {};
 
 		uint32_t queueFamilyCount = 0;
 		vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, nullptr);
@@ -385,7 +385,7 @@ namespace VulkanRenderer
 
 	SwapChainSupportDetails VulkanDevice::querySwapChainSupport(VkPhysicalDevice device) 
 	{
-		SwapChainSupportDetails details;
+		SwapChainSupportDetails details = {};
 		vkGetPhysicalDeviceSurfaceCapabilitiesKHR(device, surface_, &details.capabilities);
 
 		uint32_t formatCount;
@@ -413,7 +413,7 @@ namespace VulkanRenderer
 	{
 		for (VkFormat format : candidates) 
 		{
-			VkFormatProperties props;
+			VkFormatProperties props = {};
 			vkGetPhysicalDeviceFormatProperties(physicalDevice, format, &props);
 
 			if (tiling == VK_IMAGE_TILING_LINEAR && (props.linearTilingFeatures & features) == features) 
@@ -431,7 +431,7 @@ namespace VulkanRenderer
 
 	uint32_t VulkanDevice::findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties)
 	{
-		VkPhysicalDeviceMemoryProperties memProperties;
+		VkPhysicalDeviceMemoryProperties memProperties = {};
 		vkGetPhysicalDeviceMemoryProperties(physicalDevice, &memProperties);
 		for (uint32_t i = 0; i < memProperties.memoryTypeCount; i++)
 		{
@@ -446,7 +446,7 @@ namespace VulkanRenderer
 
 	void VulkanDevice::createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory) 
 	{
-		VkBufferCreateInfo bufferInfo{};
+		VkBufferCreateInfo bufferInfo = {};
 		bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
 		bufferInfo.size = size;
 		bufferInfo.usage = usage;
@@ -457,10 +457,10 @@ namespace VulkanRenderer
 			throw std::runtime_error("failed to create vertex buffer!");
 		}
 
-		VkMemoryRequirements memRequirements;
+		VkMemoryRequirements memRequirements = {};
 		vkGetBufferMemoryRequirements(device_, buffer, &memRequirements);
 
-		VkMemoryAllocateInfo allocInfo{};
+		VkMemoryAllocateInfo allocInfo = {};
 		allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
 		allocInfo.allocationSize = memRequirements.size;
 		allocInfo.memoryTypeIndex = findMemoryType(memRequirements.memoryTypeBits, properties);
@@ -475,16 +475,16 @@ namespace VulkanRenderer
 
 	VkCommandBuffer VulkanDevice::beginSingleTimeCommands() 
 	{
-		VkCommandBufferAllocateInfo allocInfo{};
+		VkCommandBufferAllocateInfo allocInfo = {};
 		allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
 		allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
 		allocInfo.commandPool = commandPool;
 		allocInfo.commandBufferCount = 1;
 
-		VkCommandBuffer commandBuffer;
+		VkCommandBuffer commandBuffer = {};
 		vkAllocateCommandBuffers(device_, &allocInfo, &commandBuffer);
 
-		VkCommandBufferBeginInfo beginInfo{};
+		VkCommandBufferBeginInfo beginInfo = {};
 		beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 		beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
 
@@ -496,7 +496,7 @@ namespace VulkanRenderer
 	{
 		vkEndCommandBuffer(commandBuffer);
 
-		VkSubmitInfo submitInfo{};
+		VkSubmitInfo submitInfo = {};
 		submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 		submitInfo.commandBufferCount = 1;
 		submitInfo.pCommandBuffers = &commandBuffer;
@@ -511,7 +511,7 @@ namespace VulkanRenderer
 	{
 		VkCommandBuffer commandBuffer = beginSingleTimeCommands();
 
-		VkBufferCopy copyRegion{};
+		VkBufferCopy copyRegion = {};
 		copyRegion.srcOffset = 0;  // Optional
 		copyRegion.dstOffset = 0;  // Optional
 		copyRegion.size = size;
@@ -524,7 +524,7 @@ namespace VulkanRenderer
 	{
 		VkCommandBuffer commandBuffer = beginSingleTimeCommands();
 
-		VkBufferImageCopy region{};
+		VkBufferImageCopy region = {};
 		region.bufferOffset = 0;
 		region.bufferRowLength = 0;
 		region.bufferImageHeight = 0;
@@ -548,10 +548,10 @@ namespace VulkanRenderer
 			throw std::runtime_error("failed to create image!");
 		}
 
-		VkMemoryRequirements memRequirements;
+		VkMemoryRequirements memRequirements = {};
 		vkGetImageMemoryRequirements(device_, image, &memRequirements);
 
-		VkMemoryAllocateInfo allocInfo{};
+		VkMemoryAllocateInfo allocInfo = {};
 		allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
 		allocInfo.allocationSize = memRequirements.size;
 		allocInfo.memoryTypeIndex = findMemoryType(memRequirements.memoryTypeBits, properties);

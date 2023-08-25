@@ -3,6 +3,10 @@
 #include "VulkanWindow.h"
 #include "VulkanPipeline.h"
 #include "VulkanDevice.h"
+#include "VulkanSwapChain.h"
+
+#include <memory>
+#include <vector>
 
 namespace VulkanRenderer
 {
@@ -12,7 +16,10 @@ namespace VulkanRenderer
 	public:
 		/** Constructor */
 		Application();
-		virtual ~Application();
+		~Application();
+
+		Application(const Application&) = delete;
+		Application& operator = (const Application&) = delete;
 
 		static constexpr int WIDTH = 800;
 		static constexpr int HEIGHT = 600;
@@ -20,9 +27,19 @@ namespace VulkanRenderer
 		void Run();
 
 	private:
+		void CreatePipelineLayout();
+		void CreatePipeline();
+		void CreateCommandBuffers();
+		void DrawFrame();
+
 		VulkanWindow Window;
 		VulkanDevice Device;
-		VulkanPipeline Pipeline;
+		VulkanSwapChain SwapChain;
+
+		std::unique_ptr<VulkanPipeline> Pipeline;
+
+		VkPipelineLayout PipelineLayout;
+		std::vector<VkCommandBuffer> CommandBuffers;
 	};
 
 } // namespace VulkanRenderer

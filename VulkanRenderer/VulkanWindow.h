@@ -18,6 +18,7 @@ namespace VulkanRenderer
 		VulkanWindow& operator = (const VulkanWindow&) = delete;
 
 		inline bool ShouldClose() { return glfwWindowShouldClose(Window); }
+		VkExtent2D GetExtent() { return VkExtent2D{ static_cast<uint32_t>(Width), static_cast<uint32_t>(Height) }; }
 
 		void createWindowSurface(VkInstance Instance, VkSurfaceKHR* Surface);
 

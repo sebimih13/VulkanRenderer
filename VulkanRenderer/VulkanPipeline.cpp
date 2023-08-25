@@ -23,7 +23,7 @@ namespace VulkanRenderer
 
 	PipelineConfigInfo VulkanPipeline::DefaultPipelineConfigInfo(uint32_t Width, uint32_t Height)
 	{
-		PipelineConfigInfo ConfigInfo;
+		PipelineConfigInfo ConfigInfo = {};
 
 		ConfigInfo.Viewport.x = 0.0f;
 		ConfigInfo.Viewport.y = 0.0f;
@@ -34,12 +34,6 @@ namespace VulkanRenderer
 
 		ConfigInfo.Scissor.offset = { 0, 0 };
 		ConfigInfo.Scissor.extent = { Width, Height };
-
-		ConfigInfo.ViewportInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
-		ConfigInfo.ViewportInfo.viewportCount = 1;
-		ConfigInfo.ViewportInfo.pViewports = &ConfigInfo.Viewport;
-		ConfigInfo.ViewportInfo.scissorCount = 1;
-		ConfigInfo.ViewportInfo.pScissors = &ConfigInfo.Scissor;
 
 		ConfigInfo.InputAssemblyInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
 		ConfigInfo.InputAssemblyInfo.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
@@ -147,20 +141,27 @@ namespace VulkanRenderer
 		ShadersStages[1].pNext = nullptr;
 		ShadersStages[1].pSpecializationInfo = nullptr;
 
-		VkPipelineVertexInputStateCreateInfo VertexInputInfo;
+		VkPipelineVertexInputStateCreateInfo VertexInputInfo = {};
 		VertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
 		VertexInputInfo.vertexAttributeDescriptionCount = 0;
 		VertexInputInfo.vertexBindingDescriptionCount = 0;
 		VertexInputInfo.pVertexAttributeDescriptions = nullptr;
 		VertexInputInfo.pVertexBindingDescriptions = nullptr;
 
-		VkGraphicsPipelineCreateInfo PipelineInfo;
+		VkPipelineViewportStateCreateInfo ViewportInfo = {};
+		ViewportInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
+		ViewportInfo.viewportCount = 1;
+		ViewportInfo.pViewports = &ConfigInfo.Viewport;
+		ViewportInfo.scissorCount = 1;
+		ViewportInfo.pScissors = &ConfigInfo.Scissor;
+
+		VkGraphicsPipelineCreateInfo PipelineInfo = {};
 		PipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
 		PipelineInfo.stageCount = 2;
 		PipelineInfo.pStages = ShadersStages;
 		PipelineInfo.pVertexInputState = &VertexInputInfo;
 		PipelineInfo.pInputAssemblyState = &ConfigInfo.InputAssemblyInfo;
-		PipelineInfo.pViewportState = &ConfigInfo.ViewportInfo;
+		PipelineInfo.pViewportState = &ViewportInfo;
 		PipelineInfo.pRasterizationState = &ConfigInfo.RasterizationInfo;
 		PipelineInfo.pMultisampleState = &ConfigInfo.MultisampleInfo;
 		PipelineInfo.pColorBlendState = &ConfigInfo.ColorBlendInfo;
@@ -180,7 +181,7 @@ namespace VulkanRenderer
 
 	void VulkanPipeline::CreateShaderModule(const std::vector<char>& code, VkShaderModule* ShaderModule)
 	{
-		VkShaderModuleCreateInfo CreateInfo;
+		VkShaderModuleCreateInfo CreateInfo = {};
 		CreateInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
 		CreateInfo.codeSize = code.size();
 		CreateInfo.pCode = reinterpret_cast<const uint32_t*>(code.data());
