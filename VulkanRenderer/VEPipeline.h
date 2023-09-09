@@ -10,6 +10,12 @@ namespace VE
 
 	struct PipelineConfigInfo
 	{
+		PipelineConfigInfo() = default;
+
+		// Not copyable
+		PipelineConfigInfo(const PipelineConfigInfo&) = delete;
+		PipelineConfigInfo& operator = (PipelineConfigInfo&) = delete;
+
 		VkViewport viewport;
 		VkRect2D scissor;
 		VkPipelineInputAssemblyStateCreateInfo inputAssemblyInfo;
@@ -35,7 +41,7 @@ namespace VE
 
 		void Bind(VkCommandBuffer commandBuffer);
 
-		static PipelineConfigInfo defaultPipelineConfigInfo(uint32_t width, uint32_t height);
+		static PipelineConfigInfo& defaultPipelineConfigInfo(uint32_t width, uint32_t height);
 
 	private:
 		static std::vector<char> readFile(const std::string& filePath);

@@ -24,11 +24,11 @@ namespace VE
 	void VEPipeline::Bind(VkCommandBuffer commandBuffer)
 	{
 		vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline);
-	} 
+	}
 
-	PipelineConfigInfo VEPipeline::defaultPipelineConfigInfo(uint32_t width, uint32_t height)
+	PipelineConfigInfo& VEPipeline::defaultPipelineConfigInfo(uint32_t width, uint32_t height)
 	{
-		PipelineConfigInfo configInfo{};
+		static PipelineConfigInfo configInfo{};
 		
 		configInfo.viewport.x = 0.0f;
 		configInfo.viewport.y = 0.0f;
