@@ -1,4 +1,4 @@
-#include "Application.h"
+#include "FirstApp.h"
 
 #include <iostream>
 #include <cstdlib>
@@ -8,8 +8,8 @@ int main()
 {
 	try
 	{
-		VulkanRenderer::Application App;
-		App.Run();
+		VE::FirstApp app = {};
+		app.run();
 	}
 	catch (const std::exception& e)
 	{

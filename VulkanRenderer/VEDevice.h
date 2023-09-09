@@ -1,22 +1,22 @@
 #pragma once
 
-#include "VulkanWindow.h"
+#include "VEWindow.h"
 
 #include <string>
 #include <vector>
 
-namespace VulkanRenderer 
+// TODO : format
+
+namespace VE 
 {
 
-    struct SwapChainSupportDetails 
-    {
+    struct SwapChainSupportDetails {
         VkSurfaceCapabilitiesKHR capabilities;
         std::vector<VkSurfaceFormatKHR> formats;
         std::vector<VkPresentModeKHR> presentModes;
     };
 
-    struct QueueFamilyIndices 
-    {
+    struct QueueFamilyIndices {
         uint32_t graphicsFamily;
         uint32_t presentFamily;
         bool graphicsFamilyHasValue = false;
@@ -24,23 +24,22 @@ namespace VulkanRenderer
         bool isComplete() { return graphicsFamilyHasValue && presentFamilyHasValue; }
     };
 
-    class VulkanDevice 
-    {
+    class VEDevice {
     public:
-    #ifdef NDEBUG
+#ifdef NDEBUG
         const bool enableValidationLayers = false;
-    #else
+#else
         const bool enableValidationLayers = true;
-    #endif
+#endif
 
-        VulkanDevice(VulkanWindow& window);
-        ~VulkanDevice();
+        VEDevice(VEWindow& window);
+        ~VEDevice();
 
         // Not copyable or movable
-        VulkanDevice(const VulkanDevice &) = delete;
-        void operator=(const VulkanDevice &) = delete;
-        VulkanDevice(VulkanDevice &&) = delete;
-        VulkanDevice &operator=(VulkanDevice &&) = delete;
+        VEDevice(const VEDevice&) = delete;
+        void operator = (const VEDevice&) = delete;
+        VEDevice(VEDevice&&) = delete;
+        VEDevice& operator = (VEDevice&&) = delete;
 
         VkCommandPool getCommandPool() { return commandPool; }
         VkDevice device() { return device_; }
@@ -51,16 +50,16 @@ namespace VulkanRenderer
         SwapChainSupportDetails getSwapChainSupport() { return querySwapChainSupport(physicalDevice); }
         uint32_t findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
         QueueFamilyIndices findPhysicalQueueFamilies() { return findQueueFamilies(physicalDevice); }
-        VkFormat findSupportedFormat(const std::vector<VkFormat> &candidates, VkImageTiling tiling, VkFormatFeatureFlags features);
+        VkFormat findSupportedFormat(const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features);
 
         // Buffer Helper Functions
-        void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer &buffer, VkDeviceMemory &bufferMemory);
+        void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory);
         VkCommandBuffer beginSingleTimeCommands();
         void endSingleTimeCommands(VkCommandBuffer commandBuffer);
         void copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
         void copyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height, uint32_t layerCount);
 
-        void createImageWithInfo(const VkImageCreateInfo &imageInfo, VkMemoryPropertyFlags properties, VkImage &image, VkDeviceMemory &imageMemory);
+        void createImageWithInfo(const VkImageCreateInfo& imageInfo, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory);
 
         VkPhysicalDeviceProperties properties;
 
@@ -74,10 +73,10 @@ namespace VulkanRenderer
 
         // helper functions
         bool isDeviceSuitable(VkPhysicalDevice device);
-        std::vector<const char *> getRequiredExtensions();
+        std::vector<const char*> getRequiredExtensions();
         bool checkValidationLayerSupport();
         QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
-        void populateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT &createInfo);
+        void populateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo);
         void hasGflwRequiredInstanceExtensions();
         bool checkDeviceExtensionSupport(VkPhysicalDevice device);
         SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice device);
@@ -85,7 +84,7 @@ namespace VulkanRenderer
         VkInstance instance;
         VkDebugUtilsMessengerEXT debugMessenger;
         VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
-        VulkanWindow &window;
+        VEWindow& window;
         VkCommandPool commandPool;
 
         VkDevice device_;
@@ -93,8 +92,8 @@ namespace VulkanRenderer
         VkQueue graphicsQueue_;
         VkQueue presentQueue_;
 
-        const std::vector<const char *> validationLayers = {"VK_LAYER_KHRONOS_validation"};
-        const std::vector<const char *> deviceExtensions = {VK_KHR_SWAPCHAIN_EXTENSION_NAME};
-};
+        const std::vector<const char*> validationLayers = { "VK_LAYER_KHRONOS_validation" };
+        const std::vector<const char*> deviceExtensions = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
+    };
 
-}  // namespace VulkanRenderer
+}  // namespace VE
