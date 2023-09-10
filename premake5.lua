@@ -32,7 +32,6 @@ project "glfw"
     {
         "vendor/glfw/include/GLFW/glfw3.h",
         "vendor/glfw/include/GLFW/glfw3native.h",
-
         "vendor/glfw/src/**.c",
         "vendor/glfw/src/**.h"
     }
@@ -81,6 +80,11 @@ project "VulkanRenderer"
         "%{IncludeDir.glm}"
     }
 
+    libdirs
+    {
+        "vendor/VulkanSDK/lib"
+    }
+
     links
     {
         "glfw",
@@ -91,11 +95,6 @@ project "VulkanRenderer"
         cppdialect "C++17"
         staticruntime "On"
         systemversion "latest"
-
-        libdirs
-        {
-            "vendor/VulkanSDK/lib"
-        }
 
     filter "configurations:Debug"
         symbols "On"
