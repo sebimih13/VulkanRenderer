@@ -6,6 +6,7 @@
 
 #include <string>
 #include <vector>
+#include <memory>
 
 namespace VE 
 {
@@ -16,11 +17,12 @@ namespace VE
         static constexpr int MAX_FRAMES_IN_FLIGHT = 2;
 
         VESwapChain(VEDevice& deviceRef, VkExtent2D windowExtent);
+        VESwapChain(VEDevice& deviceRef, VkExtent2D windowExtent, std::shared_ptr<VESwapChain> previousSwapChain);
         ~VESwapChain();
 
         /** Not copyable */
         VESwapChain(const VESwapChain&) = delete;
-        void operator = (const VESwapChain&) = delete;
+        VESwapChain& operator = (const VESwapChain&) = delete;
 
         VkFramebuffer getFrameBuffer(int index) { return swapChainFramebuffers[index]; }
         VkRenderPass getRenderPass() { return renderPass; }
@@ -38,6 +40,7 @@ namespace VE
         VkResult submitCommandBuffers(const VkCommandBuffer* buffers, uint32_t* imageIndex);
 
     private:
+        void init();
         void createSwapChain();
         void createImageViews();
         void createDepthResources();
@@ -66,6 +69,7 @@ namespace VE
         VkExtent2D windowExtent;
 
         VkSwapchainKHR swapChain;
+        std::shared_ptr<VESwapChain> oldSwapChain;
 
         std::vector<VkSemaphore> imageAvailableSemaphores;
         std::vector<VkSemaphore> renderFinishedSemaphores;

@@ -19,16 +19,22 @@ namespace VE
 		VEWindow& operator = (const VEWindow&) = delete;
 
 		inline bool shouldClose() { return glfwWindowShouldClose(window); }
-		VkExtent2D getExtent() { return VkExtent2D{ static_cast<uint32_t>(width), static_cast<uint32_t>(height) }; }
+		inline VkExtent2D getExtent() { return VkExtent2D{ static_cast<uint32_t>(width), static_cast<uint32_t>(height) }; }
+		inline bool wasWindowResized() { return framebufferResized; }
+		inline void resetWindowResizedFlag() { framebufferResized = false; }
+
 		void createWindowSurface(VkInstance instance, VkSurfaceKHR* surface);
 
 	private:
 		void initWindow();
 
+		static void framebufferResizeCallback(GLFWwindow* window, int width, int height);
+
 		GLFWwindow* window;
 		
-		const int width;
-		const int height;
+		int width;
+		int height;
+		bool framebufferResized;
 
 		std::string windowName;
 	};

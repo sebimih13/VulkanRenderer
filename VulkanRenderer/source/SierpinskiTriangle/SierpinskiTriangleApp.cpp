@@ -114,7 +114,7 @@ namespace VE
 
 	void SierpinskiTriangleApp::createPipeline()
 	{
-		PipelineConfigInfo& pipelineConfig = VEPipeline::defaultPipelineConfigInfo(veSwapChain.width(), veSwapChain.height());
+		PipelineConfigInfo& pipelineConfig = VEPipeline::defaultPipelineConfigInfo();
 		pipelineConfig.renderPass = veSwapChain.getRenderPass();
 		pipelineConfig.pipelineLayout = pipelineLayout;
 		vePipeline = std::make_unique<VEPipeline>(veDevice, pipelineConfig, "shaders/sierpinski_triangle_shader.vert.spv", "shaders/sierpinski_triangle_shader.frag.spv");

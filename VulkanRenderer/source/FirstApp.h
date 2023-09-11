@@ -32,11 +32,14 @@ namespace VE
 		void createPipelineLayout();
 		void createPipeline();
 		void createCommandBuffers();
+		void freeCommandBuffers();
 		void drawFrame();
+		void recreateSwapChain();
+		void recordCommandBuffer(int imageIndex);
 
 		VEWindow veWindow;
 		VEDevice veDevice;
-		VESwapChain veSwapChain;
+		std::unique_ptr<VESwapChain> veSwapChain;
 		std::unique_ptr<VEPipeline> vePipeline;
 
 		VkPipelineLayout pipelineLayout;

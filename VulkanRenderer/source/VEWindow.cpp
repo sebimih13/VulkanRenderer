@@ -8,6 +8,7 @@ namespace VE
 	VEWindow::VEWindow(const int& width, const int& height, const std::string& name)
 		: width(width)
 		, height(height)
+		, framebufferResized(false)
 		, windowName(name)
 	{
 		initWindow();
@@ -31,9 +32,19 @@ namespace VE
 	{
 		glfwInit();
 		glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-		glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+		glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
 
 		window = glfwCreateWindow(width, height, windowName.c_str(), nullptr, nullptr);
+		glfwSetWindowUserPointer(window, this);
+		glfwSetFramebufferSizeCallback(window, framebufferResizeCallback);
+	}
+
+	void VEWindow::framebufferResizeCallback(GLFWwindow* window, int width, int height)
+	{
+		VEWindow* veWindow = reinterpret_cast<VEWindow*>(glfwGetWindowUserPointer(window));
+		veWindow->framebufferResized = true;
+		veWindow->width = width;
+		veWindow->height = height;
 	}
 
 } // namespace VE

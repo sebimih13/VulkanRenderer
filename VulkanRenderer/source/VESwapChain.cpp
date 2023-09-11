@@ -11,16 +11,22 @@
 namespace VE
 {
 
-    VESwapChain::VESwapChain(VEDevice& deviceRef, VkExtent2D extent)
+    VESwapChain::VESwapChain(VEDevice& deviceRef, VkExtent2D windowExtent)
         : device(deviceRef)
-        , windowExtent(extent)
+        , windowExtent(windowExtent)
     {
-        createSwapChain();
-        createImageViews();
-        createRenderPass();
-        createDepthResources();
-        createFramebuffers();
-        createSyncObjects();
+        init();
+    }
+
+    VESwapChain::VESwapChain(VEDevice& deviceRef, VkExtent2D windowExtent, std::shared_ptr<VESwapChain> previousSwapChain)
+        : device(deviceRef)
+        , windowExtent(windowExtent)
+        , oldSwapChain(previousSwapChain)
+    {
+        init();
+
+        // clean up the old swap chain since it's no longer needed
+        oldSwapChain = nullptr;
     }
 
     VESwapChain::~VESwapChain() 
@@ -58,6 +64,16 @@ namespace VE
             vkDestroySemaphore(device.device(), imageAvailableSemaphores[i], nullptr);
             vkDestroyFence(device.device(), inFlightFences[i], nullptr);
         }
+    }
+
+    void VESwapChain::init()
+    {
+        createSwapChain();
+        createImageViews();
+        createRenderPass();
+        createDepthResources();
+        createFramebuffers();
+        createSyncObjects();
     }
 
     VkResult VESwapChain::acquireNextImage(uint32_t* imageIndex) 
@@ -172,7 +188,7 @@ namespace VE
         createInfo.presentMode = presentMode;
         createInfo.clipped = VK_TRUE;
 
-        createInfo.oldSwapchain = VK_NULL_HANDLE;
+        createInfo.oldSwapchain = oldSwapChain ? oldSwapChain->swapChain : VK_NULL_HANDLE;
 
         if (vkCreateSwapchainKHR(device.device(), &createInfo, nullptr, &swapChain) != VK_SUCCESS) 
         {
