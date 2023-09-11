@@ -37,9 +37,9 @@ namespace VE
 	{
 		// TODO : rewrite
 		std::vector<VEModel::Vertex> vertices = {
-			{{ 0.0, -0.9 }},
-			{{ -0.9, 0.9 }},
-			{{ 0.9, 0.9 }}
+			{ { 0.0, -0.9 }, { 1.0f, 0.0f, 0.0f } },
+			{ { -0.9, 0.9 }, { 0.0f, 0.0f, 1.0f } },
+			{ { 0.9, 0.9 }, { 0.0f, 1.0f, 0.0f } }
 		};
 
 		veModel = std::make_unique<VEModel>(veDevice, vertices);
