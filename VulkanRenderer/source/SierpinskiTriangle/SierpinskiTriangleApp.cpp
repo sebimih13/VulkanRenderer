@@ -1,12 +1,63 @@
-#include "FirstApp.h"
+#include "SierpinskiTriangleApp.h"
 
 #include <stdexcept>
 #include <array>
 
+// TODO : implement App interface
+
 namespace VE
 {
+	
+	std::vector<VEModel::Vertex> generateVertices(const std::vector<VEModel::Vertex>& vertices, int step = 1)
+	{
+		if (step == 7)
+		{
+			return vertices;
+		}
 
-	FirstApp::FirstApp()
+		/*
+			Vertex[i] = top-up
+			Vertex[i + 1] = left-bottom
+			Vertex[i + 2] = right-bottom
+		*/
+		std::vector<VEModel::Vertex> newVertices;
+		for (int i = 0; i < vertices.size(); i += 3)
+		{
+			// calculate the empty triangle inside
+			float midBottomVertexPosX = (vertices[i + 1].position.x + vertices[i + 2].position.x) / 2.0f;
+			float midBottomVertexPosY = (vertices[i + 1].position.y + vertices[i + 2].position.y) / 2.0f;
+			VEModel::Vertex midBottomVertex = { glm::vec2(midBottomVertexPosX, midBottomVertexPosY) };
+			
+			float midLeftVertexPosX = (vertices[i].position.x + vertices[i + 1].position.x) / 2.0f;
+			float midLeftVertexPosY = (vertices[i].position.y + vertices[i + 1].position.y) / 2.0f;
+			VEModel::Vertex midLeftVertex = { glm::vec2(midLeftVertexPosX, midLeftVertexPosY) };
+			
+			float midRightVertexPosX = (vertices[i].position.x + vertices[i + 2].position.x) / 2.0f;
+			float midRightVertexPosY = (vertices[i].position.y + vertices[i + 2].position.y) / 2.0f;
+			VEModel::Vertex midRightVertex = { glm::vec2(midRightVertexPosX, midRightVertexPosY) };
+
+			// add the vertices for the new triangles in order
+
+			// calculate the new top triangle
+			newVertices.push_back(vertices[i]);		// top
+			newVertices.push_back(midLeftVertex);	// left-bottom
+			newVertices.push_back(midRightVertex);	// right-bottom
+			
+			// calculate the new left triangle
+			newVertices.push_back(midLeftVertex);	// top
+			newVertices.push_back(vertices[i + 1]);	// left-bottom
+			newVertices.push_back(midBottomVertex);	// right-bottom
+			
+			// calculate the new right triangle
+			newVertices.push_back(midRightVertex);	// top
+			newVertices.push_back(midBottomVertex);	// left-bottom
+			newVertices.push_back(vertices[i + 2]);	// right-bottom
+		}
+
+		return generateVertices(newVertices, step + 1);
+	}
+
+	SierpinskiTriangleApp::SierpinskiTriangleApp()
 		: veWindow(WIDTH, HEIGHT, "Vulkan Renderer")
 		, veDevice(veWindow)
 		, veSwapChain(veDevice, veWindow.getExtent())
@@ -17,12 +68,12 @@ namespace VE
 		createCommandBuffers();
 	}
 
-	FirstApp::~FirstApp()
+	SierpinskiTriangleApp::~SierpinskiTriangleApp()
 	{
 		vkDestroyPipelineLayout(veDevice.device(), pipelineLayout, nullptr);
 	}
 
-	void FirstApp::run()
+	void SierpinskiTriangleApp::run()
 	{
 		while (!veWindow.shouldClose())
 		{
@@ -33,7 +84,7 @@ namespace VE
 		vkDeviceWaitIdle(veDevice.device());
 	}
 
-	void FirstApp::loadModels()
+	void SierpinskiTriangleApp::loadModels()
 	{
 		// TODO : rewrite
 		std::vector<VEModel::Vertex> vertices = {
@@ -42,10 +93,12 @@ namespace VE
 			{{ 0.9, 0.9 }}
 		};
 
+		vertices = generateVertices(vertices);
+
 		veModel = std::make_unique<VEModel>(veDevice, vertices);
 	}
 
-	void FirstApp::createPipelineLayout()
+	void SierpinskiTriangleApp::createPipelineLayout()
 	{
 		VkPipelineLayoutCreateInfo pipelineLayoutInfo = {};
 		pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
@@ -59,15 +112,15 @@ namespace VE
 		}
 	}
 
-	void FirstApp::createPipeline()
+	void SierpinskiTriangleApp::createPipeline()
 	{
 		PipelineConfigInfo& pipelineConfig = VEPipeline::defaultPipelineConfigInfo(veSwapChain.width(), veSwapChain.height());
 		pipelineConfig.renderPass = veSwapChain.getRenderPass();
 		pipelineConfig.pipelineLayout = pipelineLayout;
-		vePipeline = std::make_unique<VEPipeline>(veDevice, pipelineConfig, "shaders/simple_shader.vert.spv", "shaders/simple_shader.frag.spv");
+		vePipeline = std::make_unique<VEPipeline>(veDevice, pipelineConfig, "shaders/sierpinski_triangle_shader.vert.spv", "shaders/sierpinski_triangle_shader.frag.spv");
 	}
 
-	void FirstApp::createCommandBuffers()
+	void SierpinskiTriangleApp::createCommandBuffers()
 	{
 		commandBuffers.resize(veSwapChain.imageCount());
 
@@ -122,7 +175,7 @@ namespace VE
 		}
 	}
 
-	void FirstApp::drawFrame()
+	void SierpinskiTriangleApp::drawFrame()
 	{
 		uint32_t imageIndex;
 		auto result = veSwapChain.acquireNextImage(&imageIndex);
