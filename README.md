@@ -9,5 +9,5 @@ git clone --recursive https://github.com/sebimih13/VulkanRenderer.git
 
 2. Generate Projects
 ```sh
-"VulkanRenderer/GenerateProjects.bat"
+GenerateProjects.bat
 ```
