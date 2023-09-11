@@ -14,7 +14,7 @@ namespace VE
 		VEWindow(const int& width, const int& height, const std::string& name);
 		~VEWindow();
 
-		// Not copyable
+		/** Not copyable */
 		VEWindow(const VEWindow&) = delete;
 		VEWindow& operator = (const VEWindow&) = delete;
 

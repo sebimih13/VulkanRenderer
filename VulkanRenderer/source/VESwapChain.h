@@ -7,8 +7,6 @@
 #include <string>
 #include <vector>
 
-// TODO : format
-
 namespace VE 
 {
 
@@ -20,7 +18,7 @@ namespace VE
         VESwapChain(VEDevice& deviceRef, VkExtent2D windowExtent);
         ~VESwapChain();
 
-        // Not copyable
+        /** Not copyable */
         VESwapChain(const VESwapChain&) = delete;
         void operator = (const VESwapChain&) = delete;
 

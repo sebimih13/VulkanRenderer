@@ -9,7 +9,7 @@
 namespace VE
 {
 
-	VE::VEPipeline::VEPipeline(VEDevice& device, const PipelineConfigInfo& configInfo, const std::string& vertFilePath, const std::string& fragFilePath)
+	VEPipeline::VEPipeline(VEDevice& device, const PipelineConfigInfo& configInfo, const std::string& vertFilePath, const std::string& fragFilePath)
 		: veDevice(device)
 	{
 		createGraphicsPipeline(configInfo, vertFilePath, fragFilePath);
@@ -29,7 +29,7 @@ namespace VE
 
 	PipelineConfigInfo& VEPipeline::defaultPipelineConfigInfo(uint32_t width, uint32_t height)
 	{
-		static PipelineConfigInfo configInfo{};
+		static PipelineConfigInfo configInfo = {};
 		
 		configInfo.viewport.x = 0.0f;
 		configInfo.viewport.y = 0.0f;
@@ -148,24 +148,27 @@ namespace VE
 		shaderStages[1].pNext = nullptr;
 		shaderStages[1].pSpecializationInfo = nullptr;
 
+		// Vertex input
 		std::vector<VkVertexInputBindingDescription> bindingDescriptions = VEModel::Vertex::getBindingDescriptions();
 		std::vector<VkVertexInputAttributeDescription> attributeDescriptions = VEModel::Vertex::getAttributeDescriptions();
 
-		VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
+		VkPipelineVertexInputStateCreateInfo vertexInputInfo = {};
 		vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
 		vertexInputInfo.vertexBindingDescriptionCount = static_cast<uint32_t>(bindingDescriptions.size());
 		vertexInputInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(attributeDescriptions.size());
 		vertexInputInfo.pVertexBindingDescriptions = bindingDescriptions.data();
 		vertexInputInfo.pVertexAttributeDescriptions = attributeDescriptions.data();
 
-		VkPipelineViewportStateCreateInfo viewportInfo{};
+		// Viewport
+		VkPipelineViewportStateCreateInfo viewportInfo = {};
 		viewportInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
 		viewportInfo.viewportCount = 1;
 		viewportInfo.pViewports = &configInfo.viewport;
 		viewportInfo.scissorCount = 1;
 		viewportInfo.pScissors = &configInfo.scissor;
 
-		VkGraphicsPipelineCreateInfo pipelineInfo{};
+		// Pipeline
+		VkGraphicsPipelineCreateInfo pipelineInfo = {};
 		pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
 		pipelineInfo.stageCount = 2;
 		pipelineInfo.pStages = shaderStages;
@@ -191,7 +194,7 @@ namespace VE
 
 	void VEPipeline::createShaderModule(const std::vector<char>& code, VkShaderModule* shaderModule)
 	{
-		VkShaderModuleCreateInfo createInfo{};
+		VkShaderModuleCreateInfo createInfo = {};
 		createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
 		createInfo.codeSize = code.size();
 		createInfo.pCode = reinterpret_cast<const uint32_t*>(code.data());

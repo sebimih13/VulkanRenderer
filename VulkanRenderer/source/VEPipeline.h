@@ -35,7 +35,7 @@ namespace VE
 		VEPipeline(VEDevice& device, const PipelineConfigInfo& configInfo, const std::string& vertFilePath, const std::string& fragFilePath);
 		~VEPipeline();
 
-		// Not copyable
+		/** Not copyable */
 		VEPipeline(const VEPipeline&) = delete;
 		void operator = (const VEPipeline&) = delete;
 

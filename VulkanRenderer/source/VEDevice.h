@@ -5,18 +5,18 @@
 #include <string>
 #include <vector>
 
-// TODO : format
-
 namespace VE 
 {
 
-    struct SwapChainSupportDetails {
+    struct SwapChainSupportDetails
+    {
         VkSurfaceCapabilitiesKHR capabilities;
         std::vector<VkSurfaceFormatKHR> formats;
         std::vector<VkPresentModeKHR> presentModes;
     };
 
-    struct QueueFamilyIndices {
+    struct QueueFamilyIndices
+    {
         uint32_t graphicsFamily;
         uint32_t presentFamily;
         bool graphicsFamilyHasValue = false;
@@ -24,7 +24,8 @@ namespace VE
         bool isComplete() { return graphicsFamilyHasValue && presentFamilyHasValue; }
     };
 
-    class VEDevice {
+    class VEDevice 
+    {
     public:
 #ifdef NDEBUG
         const bool enableValidationLayers = false;
@@ -35,7 +36,7 @@ namespace VE
         VEDevice(VEWindow& window);
         ~VEDevice();
 
-        // Not copyable or movable
+        /** Not copyable or movable */
         VEDevice(const VEDevice&) = delete;
         void operator = (const VEDevice&) = delete;
         VEDevice(VEDevice&&) = delete;
@@ -52,7 +53,7 @@ namespace VE
         QueueFamilyIndices findPhysicalQueueFamilies() { return findQueueFamilies(physicalDevice); }
         VkFormat findSupportedFormat(const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features);
 
-        // Buffer Helper Functions
+        /** Buffer Helper Functions */
         void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory);
         VkCommandBuffer beginSingleTimeCommands();
         void endSingleTimeCommands(VkCommandBuffer commandBuffer);
@@ -71,7 +72,7 @@ namespace VE
         void createLogicalDevice();
         void createCommandPool();
 
-        // helper functions
+        /** helper functions */
         bool isDeviceSuitable(VkPhysicalDevice device);
         std::vector<const char*> getRequiredExtensions();
         bool checkValidationLayerSupport();

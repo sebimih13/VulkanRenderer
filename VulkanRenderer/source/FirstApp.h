@@ -15,7 +15,6 @@ namespace VE
 	class FirstApp
 	{
 	public:
-		/** Constructor */
 		FirstApp();
 		~FirstApp();
 

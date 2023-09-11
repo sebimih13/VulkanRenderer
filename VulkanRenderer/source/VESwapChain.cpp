@@ -8,14 +8,12 @@
 #include <set>
 #include <stdexcept>
 
-// TODO : format
-
 namespace VE
 {
 
     VESwapChain::VESwapChain(VEDevice& deviceRef, VkExtent2D extent)
-        : device{ deviceRef }
-        , windowExtent{ extent }
+        : device(deviceRef)
+        , windowExtent(extent)
     {
         createSwapChain();
         createImageViews();
@@ -72,7 +70,8 @@ namespace VE
             std::numeric_limits<uint64_t>::max(),
             imageAvailableSemaphores[currentFrame],  // must be a not signaled semaphore
             VK_NULL_HANDLE,
-            imageIndex);
+            imageIndex
+        );
 
         return result;
     }
@@ -135,8 +134,8 @@ namespace VE
         VkExtent2D extent = chooseSwapExtent(swapChainSupport.capabilities);
 
         uint32_t imageCount = swapChainSupport.capabilities.minImageCount + 1;
-        if (swapChainSupport.capabilities.maxImageCount > 0 &&
-            imageCount > swapChainSupport.capabilities.maxImageCount) {
+        if (swapChainSupport.capabilities.maxImageCount > 0 && imageCount > swapChainSupport.capabilities.maxImageCount) 
+        {
             imageCount = swapChainSupport.capabilities.maxImageCount;
         }
 
@@ -197,7 +196,7 @@ namespace VE
         swapChainImageViews.resize(swapChainImages.size());
         for (size_t i = 0; i < swapChainImages.size(); i++) 
         {
-            VkImageViewCreateInfo viewInfo{};
+            VkImageViewCreateInfo viewInfo = {};
             viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
             viewInfo.image = swapChainImages[i];
             viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
@@ -217,7 +216,7 @@ namespace VE
 
     void VESwapChain::createRenderPass() 
     {
-        VkAttachmentDescription depthAttachment{};
+        VkAttachmentDescription depthAttachment = {};
         depthAttachment.format = findDepthFormat();
         depthAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
         depthAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
@@ -227,7 +226,7 @@ namespace VE
         depthAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
         depthAttachment.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
 
-        VkAttachmentReference depthAttachmentRef{};
+        VkAttachmentReference depthAttachmentRef = {};
         depthAttachmentRef.attachment = 1;
         depthAttachmentRef.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
 
@@ -278,7 +277,8 @@ namespace VE
     void VESwapChain::createFramebuffers() 
     {
         swapChainFramebuffers.resize(imageCount());
-        for (size_t i = 0; i < imageCount(); i++) {
+        for (size_t i = 0; i < imageCount(); i++)
+        {
             std::array<VkImageView, 2> attachments = { swapChainImageViews[i], depthImageViews[i] };
 
             VkExtent2D swapChainExtent = getSwapChainExtent();
@@ -291,11 +291,7 @@ namespace VE
             framebufferInfo.height = swapChainExtent.height;
             framebufferInfo.layers = 1;
 
-            if (vkCreateFramebuffer(
-                device.device(),
-                &framebufferInfo,
-                nullptr,
-                &swapChainFramebuffers[i]) != VK_SUCCESS) 
+            if (vkCreateFramebuffer(device.device(), &framebufferInfo, nullptr, &swapChainFramebuffers[i]) != VK_SUCCESS) 
             {
                 throw std::runtime_error("failed to create framebuffer!");
             }
@@ -313,7 +309,7 @@ namespace VE
 
         for (int i = 0; i < depthImages.size(); i++) 
         {
-            VkImageCreateInfo imageInfo{};
+            VkImageCreateInfo imageInfo = {};
             imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
             imageInfo.imageType = VK_IMAGE_TYPE_2D;
             imageInfo.extent.width = swapChainExtent.width;
@@ -329,13 +325,9 @@ namespace VE
             imageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
             imageInfo.flags = 0;
 
-            device.createImageWithInfo(
-                imageInfo,
-                VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-                depthImages[i],
-                depthImageMemorys[i]);
+            device.createImageWithInfo(imageInfo, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, depthImages[i], depthImageMemorys[i]);
 
-            VkImageViewCreateInfo viewInfo{};
+            VkImageViewCreateInfo viewInfo = {};
             viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
             viewInfo.image = depthImages[i];
             viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
@@ -367,12 +359,11 @@ namespace VE
         fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
         fenceInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
 
-        for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
-            if (vkCreateSemaphore(device.device(), &semaphoreInfo, nullptr, &imageAvailableSemaphores[i]) !=
-                VK_SUCCESS ||
-                vkCreateSemaphore(device.device(), &semaphoreInfo, nullptr, &renderFinishedSemaphores[i]) !=
-                VK_SUCCESS ||
-                vkCreateFence(device.device(), &fenceInfo, nullptr, &inFlightFences[i]) != VK_SUCCESS) 
+        for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++)
+        {
+            if (vkCreateSemaphore(device.device(), &semaphoreInfo, nullptr, &imageAvailableSemaphores[i]) != VK_SUCCESS 
+                || vkCreateSemaphore(device.device(), &semaphoreInfo, nullptr, &renderFinishedSemaphores[i]) != VK_SUCCESS 
+                || vkCreateFence(device.device(), &fenceInfo, nullptr, &inFlightFences[i]) != VK_SUCCESS) 
             {
                 throw std::runtime_error("failed to create synchronization objects for a frame!");
             }
@@ -424,12 +415,8 @@ namespace VE
         else 
         {
             VkExtent2D actualExtent = windowExtent;
-            actualExtent.width = std::max(
-                capabilities.minImageExtent.width,
-                std::min(capabilities.maxImageExtent.width, actualExtent.width));
-            actualExtent.height = std::max(
-                capabilities.minImageExtent.height,
-                std::min(capabilities.maxImageExtent.height, actualExtent.height));
+            actualExtent.width = std::max(capabilities.minImageExtent.width, std::min(capabilities.maxImageExtent.width, actualExtent.width));
+            actualExtent.height = std::max(capabilities.minImageExtent.height, std::min(capabilities.maxImageExtent.height, actualExtent.height));
 
             return actualExtent;
         }
@@ -438,9 +425,9 @@ namespace VE
     VkFormat VESwapChain::findDepthFormat() 
     {
         return device.findSupportedFormat(
-            { VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT },
-            VK_IMAGE_TILING_OPTIMAL,
-            VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT);
+            { VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT }
+            , VK_IMAGE_TILING_OPTIMAL
+            , VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT);
     }
 
 }  // namespace VE
