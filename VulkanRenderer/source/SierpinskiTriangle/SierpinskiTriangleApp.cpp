@@ -162,7 +162,7 @@ namespace VE
 
 			vkCmdBeginRenderPass(commandBuffers[i], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 
-			vePipeline->Bind(commandBuffers[i]);
+			vePipeline->bind(commandBuffers[i]);
 			veModel->bind(commandBuffers[i]);
 			veModel->draw(commandBuffers[i]);
 

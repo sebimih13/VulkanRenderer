@@ -91,6 +91,9 @@ project "VulkanRenderer"
         "vulkan-1.lib"
     }
 
+    -- TODO: only the files existing at the time of executing this script will be considered
+    --       any new addition will be ignored, so you have to run again this script
+
     -- prebuild command to compile .vert and .frag files
     filter "files:**.vert or **.frag"
         -- A message to display while this build step is running (optional)

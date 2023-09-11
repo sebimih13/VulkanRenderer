@@ -40,7 +40,7 @@ namespace VE
 		VEPipeline(const VEPipeline&) = delete;
 		VEPipeline& operator = (const VEPipeline&) = delete;
 
-		void Bind(VkCommandBuffer commandBuffer);
+		void bind(VkCommandBuffer commandBuffer);
 
 		static PipelineConfigInfo& defaultPipelineConfigInfo();
 
