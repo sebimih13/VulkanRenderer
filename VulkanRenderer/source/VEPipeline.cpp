@@ -1,4 +1,5 @@
 #include "VEPipeline.h"
+#include "VEModel.h"
 
 #include <iostream>
 #include <fstream>
@@ -147,12 +148,15 @@ namespace VE
 		shaderStages[1].pNext = nullptr;
 		shaderStages[1].pSpecializationInfo = nullptr;
 
+		std::vector<VkVertexInputBindingDescription> bindingDescriptions = VEModel::Vertex::getBindingDescriptions();
+		std::vector<VkVertexInputAttributeDescription> attributeDescriptions = VEModel::Vertex::getAttributeDescriptions();
+
 		VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
 		vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
-		vertexInputInfo.vertexAttributeDescriptionCount = 0;
-		vertexInputInfo.vertexBindingDescriptionCount = 0;
-		vertexInputInfo.pVertexAttributeDescriptions = nullptr;
-		vertexInputInfo.pVertexBindingDescriptions = nullptr;
+		vertexInputInfo.vertexBindingDescriptionCount = static_cast<uint32_t>(bindingDescriptions.size());
+		vertexInputInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(attributeDescriptions.size());
+		vertexInputInfo.pVertexBindingDescriptions = bindingDescriptions.data();
+		vertexInputInfo.pVertexAttributeDescriptions = attributeDescriptions.data();
 
 		VkPipelineViewportStateCreateInfo viewportInfo{};
 		viewportInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;

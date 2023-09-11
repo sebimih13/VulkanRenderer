@@ -11,6 +11,7 @@ namespace VE
 		, veDevice(veWindow)
 		, veSwapChain(veDevice, veWindow.getExtent())
 	{
+		loadModels();
 		createPipelineLayout();
 		createPipeline();
 		createCommandBuffers();
@@ -30,6 +31,17 @@ namespace VE
 		}
 
 		vkDeviceWaitIdle(veDevice.device());
+	}
+
+	void FirstApp::loadModels()
+	{
+		std::vector<VEModel::Vertex> vertices = {
+			{{ 0.0, -0.5 }},
+			{{ 0.5, 0.5 }},
+			{{ -0.5, 0.5 }}
+		};
+
+		veModel = std::make_unique<VEModel>(veDevice, vertices);
 	}
 
 	void FirstApp::createPipelineLayout()
@@ -97,7 +109,8 @@ namespace VE
 			vkCmdBeginRenderPass(commandBuffers[i], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 
 			vePipeline->Bind(commandBuffers[i]);
-			vkCmdDraw(commandBuffers[i], 3, 1, 0, 0);
+			veModel->bind(commandBuffers[i]);
+			veModel->draw(commandBuffers[i]);
 
 			vkCmdEndRenderPass(commandBuffers[i]);
 

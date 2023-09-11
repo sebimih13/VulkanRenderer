@@ -4,6 +4,7 @@
 #include "VEPipeline.h"
 #include "VEDevice.h"
 #include "VESwapChain.h"
+#include "VEModel.h"
 
 #include <memory>
 #include <vector>
@@ -18,7 +19,7 @@ namespace VE
 		FirstApp();
 		~FirstApp();
 
-		// Not copyable
+		/** Not copyable */
 		FirstApp(const FirstApp&) = delete;
 		FirstApp& operator = (const FirstApp&) = delete;
 
@@ -28,6 +29,7 @@ namespace VE
 		void run();
 
 	private:
+		void loadModels();
 		void createPipelineLayout();
 		void createPipeline();
 		void createCommandBuffers();
@@ -40,6 +42,8 @@ namespace VE
 
 		VkPipelineLayout pipelineLayout;
 		std::vector<VkCommandBuffer> commandBuffers;
+
+		std::unique_ptr<VEModel> veModel;
 	};
 
 } // namespace VE
