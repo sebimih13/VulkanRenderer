@@ -11,8 +11,3 @@ git clone --recursive https://github.com/sebimih13/VulkanRenderer.git
 ```sh
 ./GenerateProjects.bat
 ```
-
-3. Compile shaders
-```sh
-./VulkanRenderer/Shaders/CompileShaders.bat
-```
