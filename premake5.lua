@@ -25,8 +25,8 @@ project "glfw"
     kind "StaticLib"
     language "C"
     
-    targetdir ("bin/" .. outputdir .. "/%{prj.name}")
-    objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
+    targetdir("bin/" .. outputdir .. "/%{prj.name}")
+    objdir("bin-int/" .. outputdir .. "/%{prj.name}")
 
     files
     {
@@ -61,8 +61,8 @@ project "VulkanRenderer"
     kind "ConsoleApp"
     language "C++"
 
-    targetdir ("bin/" .. outputdir .. "/%{prj.name}")
-    objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
+    targetdir("bin/" .. outputdir .. "/%{prj.name}")
+    objdir("bin-int/" .. outputdir .. "/%{prj.name}")
 
     files
     {
@@ -90,6 +90,25 @@ project "VulkanRenderer"
         "glfw",
         "vulkan-1.lib"
     }
+
+    -- prebuild command to compile .vert and .frag files
+    filter "files:**.vert or **.frag"
+        -- A message to display while this build step is running (optional)
+        buildmessage 'Compiling %{file.name}'
+
+        -- One or more commands to run (required)
+        buildcommands 
+        {
+            '"shaders/glslc.exe" "%{file.relpath}" -o "%{cfg.targetdir}/shaders/%{file.name}.spv"', -- TODO : compiled shaders for bin directory
+            '"shaders/glslc.exe" "%{file.relpath}" -o "%{file.directory}/%{file.name}.spv"'
+        }
+
+        -- One or more outputs resulting from the build (required)
+        buildoutputs
+        { 
+            '%{cfg.targetdir}/shaders/%{file.name}.spv',    -- TODO : compiled shaders for bin directory
+            '%{file.directory}/%{file.name}.spv'
+        }
 
     filter "system:windows"
         cppdialect "C++17"

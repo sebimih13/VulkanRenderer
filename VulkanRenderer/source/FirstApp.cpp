@@ -51,7 +51,7 @@ namespace VE
 		PipelineConfigInfo& pipelineConfig = VEPipeline::defaultPipelineConfigInfo(veSwapChain.width(), veSwapChain.height());
 		pipelineConfig.renderPass = veSwapChain.getRenderPass();
 		pipelineConfig.pipelineLayout = pipelineLayout;
-		vePipeline = std::make_unique<VEPipeline>(veDevice, pipelineConfig, "Shaders/simple_shader.vert.spv", "Shaders/simple_shader.frag.spv");
+		vePipeline = std::make_unique<VEPipeline>(veDevice, pipelineConfig, "shaders/simple_shader.vert.spv", "shaders/simple_shader.frag.spv");
 	}
 
 	void FirstApp::createCommandBuffers()
