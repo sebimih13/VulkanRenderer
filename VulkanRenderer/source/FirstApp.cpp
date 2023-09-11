@@ -1,10 +1,21 @@
 #include "FirstApp.h"
 
+#define GLM_FORCE_RADIANS
+#define GLM_FORCE_DEPTH_ZERO_TO_ONE
+#include <glm/glm.hpp>
+
 #include <stdexcept>
 #include <array>
+#include <iostream>
 
 namespace VE
 {
+
+	struct SimplePushConstantData
+	{
+		glm::vec2 offset;
+		alignas(16) glm::vec3 color;
+	};
 
 	FirstApp::FirstApp()
 		: veWindow(WIDTH, HEIGHT, "Vulkan Renderer")
@@ -36,9 +47,9 @@ namespace VE
 	{
 		// TODO : rewrite
 		std::vector<VEModel::Vertex> vertices = {
-			{ { 0.0, -0.9 }, { 1.0f, 0.0f, 0.0f } },
-			{ { -0.9, 0.9 }, { 0.0f, 0.0f, 1.0f } },
-			{ { 0.9, 0.9 }, { 0.0f, 1.0f, 0.0f } }
+			{ { 0.0, -0.5 }, { 1.0f, 0.0f, 0.0f } },
+			{ { -0.5, 0.5 }, { 0.0f, 0.0f, 1.0f } },
+			{ { 0.5, 0.5 }, { 0.0f, 1.0f, 0.0f } }
 		};
 
 		veModel = std::make_unique<VEModel>(veDevice, vertices);
@@ -46,12 +57,17 @@ namespace VE
 
 	void FirstApp::createPipelineLayout()
 	{
+		VkPushConstantRange pushConstantRage = {};
+		pushConstantRage.stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
+		pushConstantRage.offset = 0;
+		pushConstantRage.size = sizeof(SimplePushConstantData);
+
 		VkPipelineLayoutCreateInfo pipelineLayoutInfo = {};
 		pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
 		pipelineLayoutInfo.setLayoutCount = 0;
 		pipelineLayoutInfo.pSetLayouts = nullptr;
-		pipelineLayoutInfo.pushConstantRangeCount = 0;
-		pipelineLayoutInfo.pPushConstantRanges = nullptr;
+		pipelineLayoutInfo.pushConstantRangeCount = 1;
+		pipelineLayoutInfo.pPushConstantRanges = &pushConstantRage;
 		if (vkCreatePipelineLayout(veDevice.device(), &pipelineLayoutInfo, nullptr, &pipelineLayout) != VK_SUCCESS)
 		{
 			throw std::runtime_error("Failed to create pipeline layout");
@@ -66,7 +82,7 @@ namespace VE
 		PipelineConfigInfo& pipelineConfig = VEPipeline::defaultPipelineConfigInfo();
 		pipelineConfig.renderPass = veSwapChain->getRenderPass();
 		pipelineConfig.pipelineLayout = pipelineLayout;
-		vePipeline = std::make_unique<VEPipeline>(veDevice, pipelineConfig, "shaders/simple_shader.vert.spv", "shaders/simple_shader.frag.spv");
+		vePipeline = std::make_unique<VEPipeline>(veDevice, pipelineConfig, "shaders/push_constants_shader.vert.spv", "shaders/push_constants_shader.frag.spv");
 	}
 
 	void FirstApp::createCommandBuffers()
@@ -155,6 +171,9 @@ namespace VE
 
 	void FirstApp::recordCommandBuffer(int imageIndex)
 	{
+		static int frame = 0;
+		frame = (frame + 1) % 1000;
+
 		VkCommandBufferBeginInfo beginInfo = {};
 		beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 
@@ -196,7 +215,17 @@ namespace VE
 
 		vePipeline->Bind(commandBuffers[imageIndex]);
 		veModel->bind(commandBuffers[imageIndex]);
-		veModel->draw(commandBuffers[imageIndex]);
+
+		// push constant
+		for (int j = 0; j < 4; ++j)
+		{
+			SimplePushConstantData push = {};
+			push.offset = glm::vec2(-0.5f + frame * 0.002f, -0.4f + j * 0.25f);
+			push.color = glm::vec3(0.0f, 0.0f, 0.2f + 0.2f * j);
+
+			vkCmdPushConstants(commandBuffers[imageIndex], pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(SimplePushConstantData), &push);
+			veModel->draw(commandBuffers[imageIndex]);
+		}
 
 		vkCmdEndRenderPass(commandBuffers[imageIndex]);
 
