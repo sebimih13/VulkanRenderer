@@ -1,10 +1,9 @@
 #pragma once
 
 #include "VEWindow.h"
-#include "VEPipeline.h"
 #include "VEDevice.h"
-#include "VESwapChain.h"
 #include "VEGameObject.h"
+#include "VERenderer.h"
 
 #include <memory>
 #include <vector>
@@ -29,22 +28,10 @@ namespace VE
 
 	private:
 		void loadGameObjects();
-		void createPipelineLayout();
-		void createPipeline();
-		void createCommandBuffers();
-		void freeCommandBuffers();
-		void drawFrame();
-		void recreateSwapChain();
-		void recordCommandBuffer(int imageIndex);
-		void renderGameObjects(VkCommandBuffer commandBuffer);
 
 		VEWindow veWindow;
 		VEDevice veDevice;
-		std::unique_ptr<VESwapChain> veSwapChain;
-		std::unique_ptr<VEPipeline> vePipeline;
-
-		VkPipelineLayout pipelineLayout;
-		std::vector<VkCommandBuffer> commandBuffers;
+		VERenderer veRenderer;
 
 		std::vector<VEGameObject> gameObjects;
 	};
