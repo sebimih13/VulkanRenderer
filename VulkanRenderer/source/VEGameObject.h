@@ -7,13 +7,17 @@
 namespace VE
 {
 
-	struct Transform2DComponent
+	struct TransformComponent
 	{
-		glm::vec2 translation = {};		// position offset
-		glm::vec2 scale = glm::vec2(1.0f, 1.0f);
-		float rotation;
+		glm::vec3 translation = {};
+		glm::vec3 scale = glm::vec3(1.0f, 1.0f, 1.0f);
+		glm::vec3 rotation = {};
 
-		glm::mat2 mat2();
+		/**	
+		*	Matrix corresponds to (translate * rotationY * rotationX * rotationZ * scale) transformation
+		*	Rotation convention uses tait-bryan angles with axis order Y(1), X(2), Z(3)
+		*/
+		glm::mat4 mat4();
 	};
 
 	class VEGameObject
@@ -36,7 +40,7 @@ namespace VE
 		std::shared_ptr<VEModel> model;
 		glm::vec3 color;
 
-		Transform2DComponent transform2D;
+		TransformComponent transform = {};
 
 	private:
 		VEGameObject(id_t objID);
