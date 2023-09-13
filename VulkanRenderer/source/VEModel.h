@@ -23,7 +23,13 @@ namespace VE
 			static std::vector<VkVertexInputAttributeDescription> getAttributeDescriptions();
 		};
 
-		VEModel(VEDevice& device, const std::vector<Vertex>& vertices);
+		struct Data
+		{
+			std::vector<Vertex> vertices = {};
+			std::vector<uint32_t> indices = {};
+		};
+
+		VEModel(VEDevice& device, const Data& builder);
 		~VEModel();
 
 		/** Not copyable */
@@ -35,11 +41,18 @@ namespace VE
 
 	private:
 		void createVertexBuffers(const std::vector<Vertex>& vertices);
+		void createIndexBuffer(const std::vector<uint32_t>& indices);
 
 		VEDevice& veDevice;
+
 		VkBuffer vertexBuffer;
 		VkDeviceMemory vertexBufferMemory;
 		uint32_t vertexCount;
+
+		bool hasIndexBuffer;
+		VkBuffer indexBuffer;
+		VkDeviceMemory indexBufferMemory;
+		uint32_t indexCount;
 	};
 
 } // namespace VE
