@@ -1,5 +1,6 @@
 #include "FirstApp.h"
-#include "RenderSystem.h"
+#include "VERenderSystem.h"
+#include "VECamera.h"
 
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
@@ -29,16 +30,23 @@ namespace VE
 	void FirstApp::run()
 	{
 		RenderSystem renderSystem(veDevice, veRenderer.getSwapChainRenderPass());
+		VECamera camera;
 
 		while (!veWindow.shouldClose())
 		{
 			glfwPollEvents();
+
+			// setup camera
+			float aspect = veRenderer.getAspectRatio();
+			//camera.setOrthographicProjection(-aspect, aspect, -1.0f, 1.0f, -1.0f, 1.0f);
+			camera.setPerspectiveProjection(glm::radians(50.0f), aspect, 0.1f, 10.0f);
 			
+			// draw
 			if (VkCommandBuffer commandBuffer = veRenderer.beginFrame())
 			{
 				veRenderer.beginSwapChainRenderPass(commandBuffer);
 				
-				renderSystem.renderGameObjects(commandBuffer, gameObjects);
+				renderSystem.renderGameObjects(commandBuffer, gameObjects, camera);
 				
 				veRenderer.endSwapChainRenderPass(commandBuffer);
 				veRenderer.endFrame();
@@ -117,7 +125,7 @@ namespace VE
 
 		auto cube = VEGameObject::createGameObject();
 		cube.model = veModel;
-		cube.transform.translation = glm::vec3(0.0f, 0.0f, 0.5f);
+		cube.transform.translation = glm::vec3(0.0f, 0.0f, 2.5f);
 		cube.transform.scale = glm::vec3(0.5f, 0.5f, 0.5f);
 
 		gameObjects.push_back(std::move(cube));

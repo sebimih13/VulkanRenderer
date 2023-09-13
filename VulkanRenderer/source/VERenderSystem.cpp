@@ -1,4 +1,4 @@
-#include "RenderSystem.h"
+#include "VERenderSystem.h"
 
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
@@ -30,7 +30,7 @@ namespace VE
 		vkDestroyPipelineLayout(veDevice.device(), pipelineLayout, nullptr);
 	}
 
-	void RenderSystem::renderGameObjects(VkCommandBuffer commandBuffer, std::vector<VEGameObject>& gameObjects)
+	void RenderSystem::renderGameObjects(VkCommandBuffer commandBuffer, std::vector<VEGameObject>& gameObjects, const VECamera& camera)
 	{
 		vePipeline->bind(commandBuffer);
 
@@ -41,7 +41,7 @@ namespace VE
 
 			SimplePushConstantData push = {};
 			push.color = obj.color;
-			push.transform = obj.transform.mat4();
+			push.transform = camera.getProjection() * obj.transform.mat4();
 
 			vkCmdPushConstants(commandBuffer, pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(SimplePushConstantData), &push);
 			obj.model->bind(commandBuffer);
