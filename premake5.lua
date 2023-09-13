@@ -17,6 +17,7 @@ IncludeDir = {}
 IncludeDir["glfw"] = "vendor/glfw/include"
 IncludeDir["VulkanSDK"] = "vendor/VulkanSDK/include"
 IncludeDir["glm"] = "vendor/glm"
+IncludeDir["tinyobjloader"] = "vendor/tinyobjloader"
 
 
 
@@ -56,6 +57,34 @@ project "glfw"
 
 
 
+project "tinyobjloader"
+    location "bin-int/project-files"
+    kind "StaticLib"
+    language "C++"
+
+    targetdir("bin/" .. outputdir .. "/%{prj.name}")
+    objdir("bin-int/" .. outputdir .. "/%{prj.name}")
+
+    files
+    {
+        "vendor/tinyobjloader/tiny_obj_loader.h",
+        "vendor/tinyobjloader/tiny_obj_loader.cc"
+    }
+
+    filter "system:windows"
+        systemversion "latest"
+        staticruntime "On"
+
+    filter "configurations:Debug"
+        runtime "Debug"
+        symbols "on"
+
+    filter "configurations:Release"
+        runtime "Release"
+        optimize "on"
+
+
+
 project "VulkanRenderer"
     location "VulkanRenderer"
     kind "ConsoleApp"
@@ -77,7 +106,8 @@ project "VulkanRenderer"
     {
         "%{IncludeDir.glfw}",
         "%{IncludeDir.VulkanSDK}",
-        "%{IncludeDir.glm}"
+        "%{IncludeDir.glm}",
+        "%{IncludeDir.tinyobjloader}"
     }
 
     libdirs
@@ -88,7 +118,13 @@ project "VulkanRenderer"
     links
     {
         "glfw",
-        "vulkan-1.lib"
+        "vulkan-1.lib",
+        "tinyobjloader"
+    }
+
+    defines 
+    {
+        "TINYOBJLOADER_IMPLEMENTATION"
     }
 
     -- TODO: only the files existing at the time of executing this script will be considered
