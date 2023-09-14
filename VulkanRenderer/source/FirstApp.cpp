@@ -19,16 +19,21 @@ namespace VE
 
 	struct GlobalUBO
 	{
-		glm::mat4 projectionView = glm::mat4(1.0f);
-		glm::vec3 lightDirection = glm::normalize(glm::vec3(1.0f, -3.0f, -1.0f));
+		alignas(16) glm::mat4 projectionView = glm::mat4(1.0f);
+		alignas(16) glm::vec3 lightDirection = glm::normalize(glm::vec3(1.0f, -3.0f, -1.0f));
 	};
-
 
 	FirstApp::FirstApp()
 		: veWindow(WIDTH, HEIGHT, "Vulkan Renderer")
 		, veDevice(veWindow)
 		, veRenderer(veWindow, veDevice)
 	{
+		globalPool = VEDescriptorPool::Builder(veDevice)
+			.setMaxSets(VESwapChain::MAX_FRAMES_IN_FLIGHT)
+			.addPoolSize(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VESwapChain::MAX_FRAMES_IN_FLIGHT)
+			.addPoolSize(VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VESwapChain::MAX_FRAMES_IN_FLIGHT)
+			.build();
+
 		loadGameObjects();
 	}
 
@@ -53,7 +58,20 @@ namespace VE
 			uboBuffers[i]->map();
 		}
 
-		RenderSystem renderSystem(veDevice, veRenderer.getSwapChainRenderPass());
+		auto globalSetLayout = VEDescriptorSetLayout::Builder(veDevice)
+			.addBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT)
+			.build();
+
+		std::vector<VkDescriptorSet> globalDescriptorSets(VESwapChain::MAX_FRAMES_IN_FLIGHT);
+		for (int i = 0; i < globalDescriptorSets.size(); ++i)
+		{
+			VkDescriptorBufferInfo bufferInfo = uboBuffers[i]->descriptorInfo();
+			VEDescriptorWriter(*globalSetLayout, *globalPool)
+				.writeBuffer(0, &bufferInfo)
+				.build(globalDescriptorSets[i]);
+		}
+
+		RenderSystem renderSystem(veDevice, veRenderer.getSwapChainRenderPass(), globalSetLayout->getDescriptorSetLayout());
 		VECamera camera;
 		camera.setViewTarget(glm::vec3(-1.0f, -2.0f, -2.0f), glm::vec3(0.0f, 0.0f, 2.5f));
 
@@ -89,7 +107,8 @@ namespace VE
 					frameIndex,
 					frameTime,
 					commandBuffer,
-					camera
+					camera,
+					globalDescriptorSets[frameIndex]
 				};
 
 				// update

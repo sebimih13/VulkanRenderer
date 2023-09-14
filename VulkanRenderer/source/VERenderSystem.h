@@ -15,7 +15,7 @@ namespace VE
 	class RenderSystem
 	{
 	public:
-		RenderSystem(VEDevice& device, VkRenderPass renderPass);
+		RenderSystem(VEDevice& device, VkRenderPass renderPass, VkDescriptorSetLayout globalSetLayout);
 		~RenderSystem();
 
 		/** Not copyable */
@@ -25,7 +25,7 @@ namespace VE
 		void renderGameObjects(FrameInfo& frameInfo, std::vector<VEGameObject>& gameObjects);
 
 	private:
-		void createPipelineLayout();
+		void createPipelineLayout(VkDescriptorSetLayout globalSetLayout);
 		void createPipeline(VkRenderPass renderPass);
 
 		VEDevice& veDevice;

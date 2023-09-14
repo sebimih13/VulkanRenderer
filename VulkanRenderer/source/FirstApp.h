@@ -4,6 +4,7 @@
 #include "VEDevice.h"
 #include "VEGameObject.h"
 #include "VERenderer.h"
+#include "VEDescriptors.h"
 
 #include <memory>
 #include <vector>
@@ -33,6 +34,7 @@ namespace VE
 		VEDevice veDevice;
 		VERenderer veRenderer;
 
+		std::unique_ptr<VEDescriptorPool> globalPool;
 		std::vector<VEGameObject> gameObjects;
 	};
 

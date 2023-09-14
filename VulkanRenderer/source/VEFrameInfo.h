@@ -13,6 +13,7 @@ namespace VE
 		float frameTime;
 		VkCommandBuffer commandBuffer;
 		VECamera& camera;
+		VkDescriptorSet globalDescriptorSet;
 	};
 	
 } // namespace VE

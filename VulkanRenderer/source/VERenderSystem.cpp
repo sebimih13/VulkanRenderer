@@ -14,14 +14,14 @@ namespace VE
 
 	struct SimplePushConstantData
 	{
-		glm::mat4 transform = glm::mat4(1.0f);
+		glm::mat4 modelMatrix = glm::mat4(1.0f);
 		glm::mat4 normalMatrix = glm::mat4(1.0f);
 	};
 
-	RenderSystem::RenderSystem(VEDevice& device, VkRenderPass renderPass)
+	RenderSystem::RenderSystem(VEDevice& device, VkRenderPass renderPass, VkDescriptorSetLayout globalSetLayout)
 		: veDevice(device)
 	{
-		createPipelineLayout();
+		createPipelineLayout(globalSetLayout);
 		createPipeline(renderPass);
 	}
 
@@ -34,14 +34,12 @@ namespace VE
 	{
 		vePipeline->bind(frameInfo.commandBuffer);
 
-		glm::mat4 projectionView = frameInfo.camera.getProjection() * frameInfo.camera.getView();
+		vkCmdBindDescriptorSets(frameInfo.commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &frameInfo.globalDescriptorSet, 0, nullptr);
 
 		for (auto& obj : gameObjects)
 		{
 			SimplePushConstantData push = {};
-			glm::mat4 modelMatrix = obj.transform.mat4();
-
-			push.transform = projectionView * modelMatrix;
+			push.modelMatrix = obj.transform.mat4();
 			push.normalMatrix = obj.transform.normalMatrix();
 
 			vkCmdPushConstants(frameInfo.commandBuffer, pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(SimplePushConstantData), &push);
@@ -50,17 +48,19 @@ namespace VE
 		}
 	}
 
-	void RenderSystem::createPipelineLayout()
+	void RenderSystem::createPipelineLayout(VkDescriptorSetLayout globalSetLayout)
 	{
 		VkPushConstantRange pushConstantRage = {};
 		pushConstantRage.stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
 		pushConstantRage.offset = 0;
 		pushConstantRage.size = sizeof(SimplePushConstantData);
 
+		std::vector<VkDescriptorSetLayout> descriptorSetLayouts = { globalSetLayout };
+
 		VkPipelineLayoutCreateInfo pipelineLayoutInfo = {};
 		pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-		pipelineLayoutInfo.setLayoutCount = 0;
-		pipelineLayoutInfo.pSetLayouts = nullptr;
+		pipelineLayoutInfo.setLayoutCount = static_cast<uint32_t>(descriptorSetLayouts.size());
+		pipelineLayoutInfo.pSetLayouts = descriptorSetLayouts.data();
 		pipelineLayoutInfo.pushConstantRangeCount = 1;
 		pipelineLayoutInfo.pPushConstantRanges = &pushConstantRage;
 		if (vkCreatePipelineLayout(veDevice.device(), &pipelineLayoutInfo, nullptr, &pipelineLayout) != VK_SUCCESS)
