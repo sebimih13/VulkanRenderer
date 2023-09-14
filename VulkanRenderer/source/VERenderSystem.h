@@ -22,7 +22,7 @@ namespace VE
 		RenderSystem(const RenderSystem&) = delete;
 		RenderSystem& operator = (const RenderSystem&) = delete;
 
-		void renderGameObjects(FrameInfo& frameInfo, std::vector<VEGameObject>& gameObjects);
+		void renderGameObjects(FrameInfo& frameInfo);
 
 	private:
 		void createPipelineLayout(VkDescriptorSetLayout globalSetLayout);

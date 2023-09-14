@@ -61,7 +61,7 @@ namespace VE
 		}
 
 		auto globalSetLayout = VEDescriptorSetLayout::Builder(veDevice)
-			.addBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT)
+			.addBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL_GRAPHICS)
 			.build();
 
 		std::vector<VkDescriptorSet> globalDescriptorSets(VESwapChain::MAX_FRAMES_IN_FLIGHT);
@@ -112,7 +112,8 @@ namespace VE
 					frameTime,
 					commandBuffer,
 					camera,
-					globalDescriptorSets[frameIndex]
+					globalDescriptorSets[frameIndex],
+					gameObjects
 				};
 
 				// update
@@ -124,7 +125,7 @@ namespace VE
 				// render
 				veRenderer.beginSwapChainRenderPass(commandBuffer);
 				
-				renderSystem.renderGameObjects(frameInfo, gameObjects);
+				renderSystem.renderGameObjects(frameInfo);
 				
 				veRenderer.endSwapChainRenderPass(commandBuffer);
 				veRenderer.endFrame();
@@ -142,7 +143,7 @@ namespace VE
 		flatVase.transform.translation = glm::vec3(-0.5f, 0.5f, 0.0f);
 		flatVase.transform.scale = glm::vec3(3.0f, 1.5f , 3.0f);
 
-		gameObjects.push_back(std::move(flatVase));
+		gameObjects.emplace(flatVase.getID(), std::move(flatVase));
 
 		// smooth vase
 		VEGameObject smoothVase = VEGameObject::createGameObject();
@@ -150,7 +151,7 @@ namespace VE
 		smoothVase.transform.translation = glm::vec3(0.5f, 0.5f, 0.0f);
 		smoothVase.transform.scale = glm::vec3(3.0f, 1.5f , 3.0f);
 
-		gameObjects.push_back(std::move(smoothVase));
+		gameObjects.emplace(smoothVase.getID(), std::move(smoothVase));
 
 		// quad
 		VEGameObject floor = VEGameObject::createGameObject();
@@ -158,7 +159,7 @@ namespace VE
 		floor.transform.translation = glm::vec3(0.0f, 0.5f, 0.0f);
 		floor.transform.scale = glm::vec3(3.0f, 1.0f, 3.0f);
 
-		gameObjects.push_back(std::move(floor));
+		gameObjects.emplace(floor.getID(), std::move(floor));
 	}
 
 } // namespace VE

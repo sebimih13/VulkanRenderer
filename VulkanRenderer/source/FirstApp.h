@@ -35,7 +35,7 @@ namespace VE
 		VERenderer veRenderer;
 
 		std::unique_ptr<VEDescriptorPool> globalPool;
-		std::vector<VEGameObject> gameObjects;
+		VEGameObject::Map gameObjects;
 	};
 
 } // namespace VE

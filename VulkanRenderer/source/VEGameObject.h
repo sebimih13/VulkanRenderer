@@ -3,6 +3,7 @@
 #include "VEModel.h"
 
 #include <memory>
+#include <unordered_map>
 
 namespace VE
 {
@@ -25,6 +26,7 @@ namespace VE
 	{
 	public:
 		using id_t = unsigned int;
+		using Map = std::unordered_map<id_t, VEGameObject>;
 
 		/** not copyable */
 		VEGameObject(const VEGameObject&) = delete;

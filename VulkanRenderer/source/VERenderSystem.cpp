@@ -30,14 +30,21 @@ namespace VE
 		vkDestroyPipelineLayout(veDevice.device(), pipelineLayout, nullptr);
 	}
 
-	void RenderSystem::renderGameObjects(FrameInfo& frameInfo, std::vector<VEGameObject>& gameObjects)
+	void RenderSystem::renderGameObjects(FrameInfo& frameInfo)
 	{
 		vePipeline->bind(frameInfo.commandBuffer);
 
 		vkCmdBindDescriptorSets(frameInfo.commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &frameInfo.globalDescriptorSet, 0, nullptr);
 
-		for (auto& obj : gameObjects)
+		for (auto& kv : frameInfo.gameObjects)
 		{
+			auto& obj = kv.second;
+
+			if (obj.model == nullptr)
+			{
+				continue;
+			}
+
 			SimplePushConstantData push = {};
 			push.modelMatrix = obj.transform.mat4();
 			push.normalMatrix = obj.transform.normalMatrix();
