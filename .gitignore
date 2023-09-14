@@ -457,8 +457,11 @@ bin/
 bin-int/
 [Bb][Uu][Ii][Ll][Dd]/
 
-# Vulkan SDK
-vendor/VulkanSDK
+# Ignore vendor folder
+vendor/
 
 # Exclude compiled shaders
 *.spv
+
+# Allow the models/ folder and its contents
+!VulkanRenderer/models/*.obj
