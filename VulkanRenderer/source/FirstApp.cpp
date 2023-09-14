@@ -76,14 +76,21 @@ namespace VE
 
 	void FirstApp::loadGameObjects()
 	{
-		std::shared_ptr<VEModel> veModel = VEModel::createModelFromFile(veDevice, "models/smooth_vase.obj");
+		// flat vase
+		VEGameObject flatVase = VEGameObject::createGameObject();
+		flatVase.model = VEModel::createModelFromFile(veDevice, "models/flat_vase.obj");
+		flatVase.transform.translation = glm::vec3(-0.5f, 0.5f, 2.5f);
+		flatVase.transform.scale = glm::vec3(3.0f, 1.5f , 3.0f);
 
-		VEGameObject gameobj = VEGameObject::createGameObject();
-		gameobj.model = veModel;
-		gameobj.transform.translation = glm::vec3(0.0f, 0.0f, 2.5f);
-		gameobj.transform.scale = glm::vec3(3.0f);
+		gameObjects.push_back(std::move(flatVase));
 
-		gameObjects.push_back(std::move(gameobj));
+		// smooth vase
+		VEGameObject smoothVase = VEGameObject::createGameObject();
+		smoothVase.model = VEModel::createModelFromFile(veDevice, "models/smooth_vase.obj");
+		smoothVase.transform.translation = glm::vec3(0.5f, 0.5f, 2.5f);
+		smoothVase.transform.scale = glm::vec3(3.0f, 1.5f , 3.0f);
+
+		gameObjects.push_back(std::move(smoothVase));
 	}
 
 } // namespace VE

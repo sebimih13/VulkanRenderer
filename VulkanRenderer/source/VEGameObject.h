@@ -18,6 +18,7 @@ namespace VE
 		*	Rotation convention uses tait-bryan angles with axis order Y(1), X(2), Z(3)
 		*/
 		glm::mat4 mat4();
+		glm::mat3 normalMatrix();
 	};
 
 	class VEGameObject
