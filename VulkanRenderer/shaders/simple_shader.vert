@@ -17,8 +17,9 @@ layout (push_constant) uniform Push
 
 layout (set = 0, binding = 0) uniform GlobalUBO
 {
-	mat4 projectionViewMatrix;
-	vec4 ambientLightColor;
+	mat4 projection;
+	mat4 view;
+	vec4 ambientLightColor; 
 	vec3 lightPosition;
 	vec4 lightColor;
 } ubo;
@@ -28,7 +29,7 @@ const float AMBIENT = 0.02;
 void main()
 {
 	vec4 positionWorld = push.modelMatrix * vec4(position, 1.0);
-	gl_Position = ubo.projectionViewMatrix * positionWorld;
+	gl_Position = ubo.projection * ubo.view * positionWorld;
 
 	fragNormalWorld = normalize(mat3(push.normalMatrix) * normal);
 	fragPosWorld = positionWorld.xyz;

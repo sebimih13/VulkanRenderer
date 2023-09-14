@@ -97,6 +97,9 @@ namespace VE
 		configInfo.dynamicStateInfo.dynamicStateCount = static_cast<uint32_t>(configInfo.dynamicStateEnables.size());
 		configInfo.dynamicStateInfo.flags = 0;
 
+		configInfo.bindingDescriptions = VEModel::Vertex::getBindingDescriptions();
+		configInfo.attributeDescriptions = VEModel::Vertex::getAttributeDescriptions();
+
 		return configInfo;
 	}
 
@@ -151,8 +154,8 @@ namespace VE
 		shaderStages[1].pSpecializationInfo = nullptr;
 
 		// Vertex input
-		std::vector<VkVertexInputBindingDescription> bindingDescriptions = VEModel::Vertex::getBindingDescriptions();
-		std::vector<VkVertexInputAttributeDescription> attributeDescriptions = VEModel::Vertex::getAttributeDescriptions();
+		const std::vector<VkVertexInputBindingDescription>& bindingDescriptions = configInfo.bindingDescriptions;
+		const std::vector<VkVertexInputAttributeDescription>& attributeDescriptions = configInfo.attributeDescriptions;
 
 		VkPipelineVertexInputStateCreateInfo vertexInputInfo = {};
 		vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;

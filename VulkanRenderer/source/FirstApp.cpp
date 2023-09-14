@@ -3,6 +3,7 @@
 #include "VECamera.h"
 #include "KeyboardMovementController.h"
 #include "VEBuffer.h"
+#include "systems/PointLightSystem.h"
 
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
@@ -19,7 +20,8 @@ namespace VE
 
 	struct GlobalUBO
 	{
-		glm::mat4 projectionView = glm::mat4(1.0f);
+		glm::mat4 projection = glm::mat4(1.0f);
+		glm::mat4 view = glm::mat4(1.0f);
 		glm::vec4 ambientLightColor = glm::vec4(1.0f, 1.0f, 1.0f, 0.02f);
 		glm::vec3 lightPosition = glm::vec3(-1.0f);
 		alignas(16) glm::vec4 lightColor = glm::vec4(1.0f);
@@ -74,6 +76,8 @@ namespace VE
 		}
 
 		RenderSystem renderSystem(veDevice, veRenderer.getSwapChainRenderPass(), globalSetLayout->getDescriptorSetLayout());
+		PointLightSystem pointLightSystem(veDevice, veRenderer.getSwapChainRenderPass(), globalSetLayout->getDescriptorSetLayout());
+
 		VECamera camera;
 		camera.setViewTarget(glm::vec3(-1.0f, -2.0f, -2.0f), glm::vec3(0.0f, 0.0f, 2.5f));
 
@@ -118,7 +122,8 @@ namespace VE
 
 				// update
 				GlobalUBO ubo = {};
-				ubo.projectionView = camera.getProjection() * camera.getView();
+				ubo.projection = camera.getProjection();
+				ubo.view = camera.getView();
 				uboBuffers[frameIndex]->writeToBuffer(&ubo);
 				uboBuffers[frameIndex]->flush();
 
@@ -126,6 +131,7 @@ namespace VE
 				veRenderer.beginSwapChainRenderPass(commandBuffer);
 				
 				renderSystem.renderGameObjects(frameInfo);
+				pointLightSystem.render(frameInfo);
 				
 				veRenderer.endSwapChainRenderPass(commandBuffer);
 				veRenderer.endFrame();
