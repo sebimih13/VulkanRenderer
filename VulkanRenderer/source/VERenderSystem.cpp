@@ -30,11 +30,11 @@ namespace VE
 		vkDestroyPipelineLayout(veDevice.device(), pipelineLayout, nullptr);
 	}
 
-	void RenderSystem::renderGameObjects(VkCommandBuffer commandBuffer, std::vector<VEGameObject>& gameObjects, const VECamera& camera)
+	void RenderSystem::renderGameObjects(FrameInfo& frameInfo, std::vector<VEGameObject>& gameObjects)
 	{
-		vePipeline->bind(commandBuffer);
+		vePipeline->bind(frameInfo.commandBuffer);
 
-		glm::mat4 projectionView = camera.getProjection() * camera.getView();
+		glm::mat4 projectionView = frameInfo.camera.getProjection() * frameInfo.camera.getView();
 
 		for (auto& obj : gameObjects)
 		{
@@ -44,9 +44,9 @@ namespace VE
 			push.transform = projectionView * modelMatrix;
 			push.normalMatrix = obj.transform.normalMatrix();
 
-			vkCmdPushConstants(commandBuffer, pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(SimplePushConstantData), &push);
-			obj.model->bind(commandBuffer);
-			obj.model->draw(commandBuffer);
+			vkCmdPushConstants(frameInfo.commandBuffer, pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(SimplePushConstantData), &push);
+			obj.model->bind(frameInfo.commandBuffer);
+			obj.model->draw(frameInfo.commandBuffer);
 		}
 	}
 

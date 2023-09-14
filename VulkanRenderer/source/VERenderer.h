@@ -30,7 +30,7 @@ namespace VE
 		inline VkRenderPass getSwapChainRenderPass() const { return veSwapChain->getRenderPass(); }
 		inline float getAspectRatio() const { return veSwapChain->extentAspectRatio(); }
 		VkCommandBuffer getCurrentCommandBuffer() const;
-		inline const int getFrameIndex() const;
+		const int getFrameIndex() const;
 
 	private:
 		void createCommandBuffers();

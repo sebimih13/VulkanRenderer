@@ -128,15 +128,16 @@ namespace VE
 		vkCmdEndRenderPass(commandBuffer);
 	}
 
-	inline VkCommandBuffer VERenderer::getCurrentCommandBuffer() const
+	VkCommandBuffer VERenderer::getCurrentCommandBuffer() const
 	{
 		assert(isFrameStarted && "Cannot get command buffer when frame not in progress");
 		return commandBuffers[currentFrameIndex];
 	}
 
-	inline const int VERenderer::getFrameIndex() const
+	const int VERenderer::getFrameIndex() const
 	{
 		assert(isFrameStarted && "Cannot get frame index when frame not in progress");
+
 		return currentFrameIndex;
 	}
 
