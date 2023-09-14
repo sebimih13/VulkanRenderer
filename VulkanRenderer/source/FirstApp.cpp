@@ -19,8 +19,10 @@ namespace VE
 
 	struct GlobalUBO
 	{
-		alignas(16) glm::mat4 projectionView = glm::mat4(1.0f);
-		alignas(16) glm::vec3 lightDirection = glm::normalize(glm::vec3(1.0f, -3.0f, -1.0f));
+		glm::mat4 projectionView = glm::mat4(1.0f);
+		glm::vec4 ambientLightColor = glm::vec4(1.0f, 1.0f, 1.0f, 0.02f);
+		glm::vec3 lightPosition = glm::vec3(-1.0f);
+		alignas(16) glm::vec4 lightColor = glm::vec4(1.0f);
 	};
 
 	FirstApp::FirstApp()
@@ -76,6 +78,8 @@ namespace VE
 		camera.setViewTarget(glm::vec3(-1.0f, -2.0f, -2.0f), glm::vec3(0.0f, 0.0f, 2.5f));
 
 		VEGameObject viewerObject = VEGameObject::createGameObject();
+		viewerObject.transform.translation.z = -2.5f;
+
 		KeyboardMovementController cameraController;
 
 		// time
@@ -96,7 +100,7 @@ namespace VE
 
 			// setup camera
 			float aspect = veRenderer.getAspectRatio();
-			camera.setPerspectiveProjection(glm::radians(50.0f), aspect, 0.1f, 10.0f);
+			camera.setPerspectiveProjection(glm::radians(50.0f), aspect, 0.1f, 1000.0f);
 			
 			// draw
 			if (VkCommandBuffer commandBuffer = veRenderer.beginFrame())
@@ -135,7 +139,7 @@ namespace VE
 		// flat vase
 		VEGameObject flatVase = VEGameObject::createGameObject();
 		flatVase.model = VEModel::createModelFromFile(veDevice, "models/flat_vase.obj");
-		flatVase.transform.translation = glm::vec3(-0.5f, 0.5f, 2.5f);
+		flatVase.transform.translation = glm::vec3(-0.5f, 0.5f, 0.0f);
 		flatVase.transform.scale = glm::vec3(3.0f, 1.5f , 3.0f);
 
 		gameObjects.push_back(std::move(flatVase));
@@ -143,10 +147,18 @@ namespace VE
 		// smooth vase
 		VEGameObject smoothVase = VEGameObject::createGameObject();
 		smoothVase.model = VEModel::createModelFromFile(veDevice, "models/smooth_vase.obj");
-		smoothVase.transform.translation = glm::vec3(0.5f, 0.5f, 2.5f);
+		smoothVase.transform.translation = glm::vec3(0.5f, 0.5f, 0.0f);
 		smoothVase.transform.scale = glm::vec3(3.0f, 1.5f , 3.0f);
 
 		gameObjects.push_back(std::move(smoothVase));
+
+		// quad
+		VEGameObject floor = VEGameObject::createGameObject();
+		floor.model = VEModel::createModelFromFile(veDevice, "models/quad.obj");
+		floor.transform.translation = glm::vec3(0.0f, 0.5f, 0.0f);
+		floor.transform.scale = glm::vec3(3.0f, 1.0f, 3.0f);
+
+		gameObjects.push_back(std::move(floor));
 	}
 
 } // namespace VE
