@@ -45,7 +45,8 @@ namespace VE
 
 		void bind(VkCommandBuffer commandBuffer);
 
-		static PipelineConfigInfo& defaultPipelineConfigInfo();
+		static void defaultPipelineConfigInfo(PipelineConfigInfo& configInfo);
+		static void enableAlphaBlending(PipelineConfigInfo& configInfo);
 
 	private:
 		static std::vector<char> readFile(const std::string& filePath);

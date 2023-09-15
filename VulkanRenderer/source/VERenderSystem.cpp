@@ -80,7 +80,9 @@ namespace VE
 	{
 		assert(pipelineLayout != nullptr && "Cannot create pipeline before pipeline layout");
 
-		PipelineConfigInfo& pipelineConfig = VEPipeline::defaultPipelineConfigInfo();
+		PipelineConfigInfo pipelineConfig = {};
+
+		VEPipeline::defaultPipelineConfigInfo(pipelineConfig);
 		pipelineConfig.renderPass = renderPass;
 		pipelineConfig.pipelineLayout = pipelineLayout;
 		vePipeline = std::make_unique<VEPipeline>(veDevice, pipelineConfig, "shaders/simple_shader.vert.spv", "shaders/simple_shader.frag.spv");

@@ -116,6 +116,7 @@ namespace VE
 				GlobalUBO ubo = {};
 				ubo.projection = camera.getProjection();
 				ubo.view = camera.getView();
+				ubo.inverseView = camera.getInverseView();
 
 				pointLightSystem.update(frameInfo, ubo);
 
@@ -125,6 +126,7 @@ namespace VE
 				// render
 				veRenderer.beginSwapChainRenderPass(commandBuffer);
 				
+				// order here matters
 				renderSystem.renderGameObjects(frameInfo);
 				pointLightSystem.render(frameInfo);
 				

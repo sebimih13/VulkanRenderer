@@ -27,10 +27,8 @@ namespace VE
 		vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline);
 	}
 
-	PipelineConfigInfo& VEPipeline::defaultPipelineConfigInfo()
+	void VEPipeline::defaultPipelineConfigInfo(PipelineConfigInfo& configInfo)
 	{
-		static PipelineConfigInfo configInfo = {};
-
 		configInfo.inputAssemblyInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
 		configInfo.inputAssemblyInfo.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
 		configInfo.inputAssemblyInfo.primitiveRestartEnable = VK_FALSE;
@@ -99,8 +97,18 @@ namespace VE
 
 		configInfo.bindingDescriptions = VEModel::Vertex::getBindingDescriptions();
 		configInfo.attributeDescriptions = VEModel::Vertex::getAttributeDescriptions();
+	}
 
-		return configInfo;
+	void VEPipeline::enableAlphaBlending(PipelineConfigInfo& configInfo)
+	{
+		configInfo.colorBlendAttachment.blendEnable = VK_TRUE;
+		configInfo.colorBlendAttachment.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
+		configInfo.colorBlendAttachment.srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
+		configInfo.colorBlendAttachment.dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
+		configInfo.colorBlendAttachment.colorBlendOp = VK_BLEND_OP_ADD;
+		configInfo.colorBlendAttachment.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
+		configInfo.colorBlendAttachment.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
+		configInfo.colorBlendAttachment.alphaBlendOp = VK_BLEND_OP_ADD;
 	}
 
 	std::vector<char> VEPipeline::readFile(const std::string& filePath)

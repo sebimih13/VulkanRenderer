@@ -62,10 +62,8 @@ namespace VE
 
 	void PointLightSystem::render(FrameInfo& frameInfo)
 	{
-		vePipeline->bind(frameInfo.commandBuffer);
-
-		vkCmdBindDescriptorSets(frameInfo.commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &frameInfo.globalDescriptorSet, 0, nullptr);
-
+		// sort lights
+		std::map<float, VEGameObject::id_t> sorted;
 		for (auto& kv : frameInfo.gameObjects)
 		{
 			auto& obj = kv.second;
@@ -73,6 +71,21 @@ namespace VE
 			{
 				continue;
 			}
+
+			// calculate distance
+			auto offset = frameInfo.camera.getPosition() - obj.transform.translation;
+			float disSquared = glm::dot(offset, offset);
+			sorted[disSquared] = obj.getID();
+		}
+
+		vePipeline->bind(frameInfo.commandBuffer);
+
+		vkCmdBindDescriptorSets(frameInfo.commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &frameInfo.globalDescriptorSet, 0, nullptr);
+
+		// iterate through sorted lights in reverse order
+		for (auto it = sorted.rbegin(); it != sorted.rend(); ++it)
+		{
+			auto& obj = frameInfo.gameObjects.at(it->second);
 
 			PointLightPushConstants push = {};
 			push.position = glm::vec4(obj.transform.translation, 1.0f);
@@ -109,7 +122,10 @@ namespace VE
 	{
 		assert(pipelineLayout != nullptr && "Cannot create pipeline before pipeline layout");
 
-		PipelineConfigInfo& pipelineConfig = VEPipeline::defaultPipelineConfigInfo();
+		PipelineConfigInfo pipelineConfig = {};
+
+		VEPipeline::defaultPipelineConfigInfo(pipelineConfig);
+		VEPipeline::enableAlphaBlending(pipelineConfig);
 		pipelineConfig.bindingDescriptions.clear();
 		pipelineConfig.attributeDescriptions.clear();
 		pipelineConfig.renderPass = renderPass;
