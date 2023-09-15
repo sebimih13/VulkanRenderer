@@ -15,13 +15,19 @@ layout (push_constant) uniform Push
 	mat4 normalMatrix;
 } push;
 
+struct PointLight
+{
+	vec4 position;
+	vec4 color;
+};
+
 layout (set = 0, binding = 0) uniform GlobalUBO
 {
 	mat4 projection;
 	mat4 view;
-	vec4 ambientLightColor; 
-	vec3 lightPosition;
-	vec4 lightColor;
+	vec4 ambientLightColor;
+	PointLight pointLights[10];		// TODO : specialization constants
+	int numLights;
 } ubo;
 
 const float AMBIENT = 0.02;

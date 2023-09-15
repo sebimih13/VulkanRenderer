@@ -22,6 +22,11 @@ namespace VE
 		glm::mat3 normalMatrix();
 	};
 
+	struct PointLightComponent
+	{
+		float lightIntensity = 1.0f;
+	};
+
 	class VEGameObject
 	{
 	public:
@@ -37,13 +42,17 @@ namespace VE
 		VEGameObject& operator = (VEGameObject&&) = default;
 
 		static VEGameObject createGameObject();
+		static VEGameObject makePointLight(float intensity = 10.0f, float radius = 0.1f, glm::vec3 color = glm::vec3(1.0f));
 
 		inline const id_t getID() const { return id; }
 
-		std::shared_ptr<VEModel> model;
 		glm::vec3 color;
 
 		TransformComponent transform = {};
+
+		// optional pointer components
+		std::shared_ptr<VEModel> model;
+		std::unique_ptr<PointLightComponent> pointLight;
 
 	private:
 		VEGameObject(id_t objID);

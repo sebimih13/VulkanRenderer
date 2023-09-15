@@ -9,6 +9,7 @@
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #include <glm/glm.hpp>
 #include <glm/gtc/constants.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 #include <iostream>
 #include <stdexcept>
@@ -17,15 +18,6 @@
 
 namespace VE
 {
-
-	struct GlobalUBO
-	{
-		glm::mat4 projection = glm::mat4(1.0f);
-		glm::mat4 view = glm::mat4(1.0f);
-		glm::vec4 ambientLightColor = glm::vec4(1.0f, 1.0f, 1.0f, 0.02f);
-		glm::vec3 lightPosition = glm::vec3(-1.0f);
-		alignas(16) glm::vec4 lightColor = glm::vec4(1.0f);
-	};
 
 	FirstApp::FirstApp()
 		: veWindow(WIDTH, HEIGHT, "Vulkan Renderer")
@@ -124,6 +116,9 @@ namespace VE
 				GlobalUBO ubo = {};
 				ubo.projection = camera.getProjection();
 				ubo.view = camera.getView();
+
+				pointLightSystem.update(frameInfo, ubo);
+
 				uboBuffers[frameIndex]->writeToBuffer(&ubo);
 				uboBuffers[frameIndex]->flush();
 
@@ -147,7 +142,7 @@ namespace VE
 		VEGameObject flatVase = VEGameObject::createGameObject();
 		flatVase.model = VEModel::createModelFromFile(veDevice, "models/flat_vase.obj");
 		flatVase.transform.translation = glm::vec3(-0.5f, 0.5f, 0.0f);
-		flatVase.transform.scale = glm::vec3(3.0f, 1.5f , 3.0f);
+		flatVase.transform.scale = glm::vec3(3.0f, 1.5f, 3.0f);
 
 		gameObjects.emplace(flatVase.getID(), std::move(flatVase));
 
@@ -155,7 +150,7 @@ namespace VE
 		VEGameObject smoothVase = VEGameObject::createGameObject();
 		smoothVase.model = VEModel::createModelFromFile(veDevice, "models/smooth_vase.obj");
 		smoothVase.transform.translation = glm::vec3(0.5f, 0.5f, 0.0f);
-		smoothVase.transform.scale = glm::vec3(3.0f, 1.5f , 3.0f);
+		smoothVase.transform.scale = glm::vec3(3.0f, 1.5f, 3.0f);
 
 		gameObjects.emplace(smoothVase.getID(), std::move(smoothVase));
 
@@ -166,6 +161,27 @@ namespace VE
 		floor.transform.scale = glm::vec3(3.0f, 1.0f, 3.0f);
 
 		gameObjects.emplace(floor.getID(), std::move(floor));
+
+		// point lights
+		std::vector<glm::vec3> lightColors = {
+			 { 1.0f, 0.1f, 0.1f },
+			 { 0.1f, 0.1f, 1.f },
+			 { 0.1f, 1.0f, 0.1f },
+			 { 1.0f, 1.0f, 0.1f },
+			 { 0.1f, 1.0f, 1.0f },
+			 { 1.0f, 1.0f, 1.0f }
+		};
+
+		for (int i = 0; i < lightColors.size(); i++)
+		{
+			VEGameObject pointLight = VEGameObject::makePointLight(0.2f);
+			pointLight.color = lightColors[i];
+			glm::mat4 rotateLight = glm::rotate(glm::mat4(1.0f), (i * glm::two_pi<float>()) / lightColors.size(), glm::vec3(0.0f, -1.0f, 0.0f));
+			pointLight.transform.translation = glm::vec3(rotateLight * glm::vec4(-1.0f, -1.0f, -1.0f, -1.0f));
+
+			gameObjects.emplace(pointLight.getID(), std::move(pointLight));
+
+		}
 	}
 
 } // namespace VE

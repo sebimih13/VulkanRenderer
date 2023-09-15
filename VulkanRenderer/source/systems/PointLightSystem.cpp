@@ -4,6 +4,7 @@
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #include <glm/glm.hpp>
 #include <glm/gtc/constants.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 #include <stdexcept>
 #include <array>
@@ -11,6 +12,13 @@
 
 namespace VE
 {
+
+	struct PointLightPushConstants
+	{
+		glm::vec4 position;
+		glm::vec4 color;
+		float radius;
+	};
 
 	PointLightSystem::PointLightSystem(VEDevice& device, VkRenderPass renderPass, VkDescriptorSetLayout globalSetLayout)
 		: veDevice(device)
@@ -24,21 +32,64 @@ namespace VE
 		vkDestroyPipelineLayout(veDevice.device(), pipelineLayout, nullptr);
 	}
 
+	void PointLightSystem::update(FrameInfo& frameInfo, GlobalUBO& ubo)
+	{
+		glm::mat4 rotateLight = glm::rotate(glm::mat4(1.0f), frameInfo.frameTime, glm::vec3(0.0f, -1.0f, 0.0f));
+
+		int lightIndex = 0;
+		for (auto& kv : frameInfo.gameObjects)
+		{
+			auto& obj = kv.second;
+			if (obj.pointLight == nullptr)
+			{
+				continue;
+			}
+
+			assert(lightIndex < MAX_LIGHTS && "Point lights exceed maxmium specified");
+
+			// update light position
+			obj.transform.translation = glm::vec3(rotateLight * glm::vec4(obj.transform.translation, 1.0f));
+
+			// copy light to ubo
+			ubo.pointLights[lightIndex].position = glm::vec4(obj.transform.translation, 1.0f);
+			ubo.pointLights[lightIndex].color = glm::vec4(obj.color, obj.pointLight->lightIntensity);
+
+			lightIndex += 1;
+		}
+
+		ubo.numLights = lightIndex;
+	}
+
 	void PointLightSystem::render(FrameInfo& frameInfo)
 	{
 		vePipeline->bind(frameInfo.commandBuffer);
 
 		vkCmdBindDescriptorSets(frameInfo.commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &frameInfo.globalDescriptorSet, 0, nullptr);
 
-		vkCmdDraw(frameInfo.commandBuffer, 6, 1, 0, 0);
+		for (auto& kv : frameInfo.gameObjects)
+		{
+			auto& obj = kv.second;
+			if (obj.pointLight == nullptr)
+			{
+				continue;
+			}
+
+			PointLightPushConstants push = {};
+			push.position = glm::vec4(obj.transform.translation, 1.0f);
+			push.color = glm::vec4(obj.color, obj.pointLight->lightIntensity);
+			push.radius = obj.transform.scale.x;
+
+			vkCmdPushConstants(frameInfo.commandBuffer, pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(PointLightPushConstants), &push);
+			vkCmdDraw(frameInfo.commandBuffer, 6, 1, 0, 0);
+		}
 	}
 
 	void PointLightSystem::createPipelineLayout(VkDescriptorSetLayout globalSetLayout)
 	{
-		//VkPushConstantRange pushConstantRage = {};
-		//pushConstantRage.stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
-		//pushConstantRage.offset = 0;
-		//pushConstantRage.size = sizeof(SimplePushConstantData);
+		VkPushConstantRange pushConstantRage = {};
+		pushConstantRage.stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
+		pushConstantRage.offset = 0;
+		pushConstantRage.size = sizeof(PointLightPushConstants);
 
 		std::vector<VkDescriptorSetLayout> descriptorSetLayouts = { globalSetLayout };
 
@@ -46,8 +97,8 @@ namespace VE
 		pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
 		pipelineLayoutInfo.setLayoutCount = static_cast<uint32_t>(descriptorSetLayouts.size());
 		pipelineLayoutInfo.pSetLayouts = descriptorSetLayouts.data();
-		pipelineLayoutInfo.pushConstantRangeCount = 0;
-		pipelineLayoutInfo.pPushConstantRanges = nullptr;
+		pipelineLayoutInfo.pushConstantRangeCount = 1;
+		pipelineLayoutInfo.pPushConstantRanges = &pushConstantRage;
 		if (vkCreatePipelineLayout(veDevice.device(), &pipelineLayoutInfo, nullptr, &pipelineLayout) != VK_SUCCESS)
 		{
 			throw std::runtime_error("Failed to create pipeline layout");
