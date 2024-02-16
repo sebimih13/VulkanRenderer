@@ -11,3 +11,9 @@ git clone --recursive https://github.com/sebimih13/VulkanRenderer.git
 ```sh
 GenerateProjects.bat
 ```
+
+3. Build and Run VulkanRenderer.sln
+```sh
+VulkanRenderer.sln
+```
+
